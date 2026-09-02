@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rakabill - Modern Billing Solution</title>
+  <title>Rakabill Pro - Invoice & Inventory System</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @media print {
@@ -14,165 +14,228 @@
     }
   </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen font-sans">
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans">
+
   <!-- Header / Navbar -->
-  <header class="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4">
+  <header class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-3">
-        <div id="logo-container" class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center font-bold text-xl shadow-lg">
+        <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center font-black text-2xl shadow-lg shadow-indigo-500/20">
           R
         </div>
-        <h1 class="text-2xl font-black tracking-wider text-indigo-400">Rakabill</h1>
+        <h1 class="text-2xl font-black tracking-wider text-indigo-400">Rakabill <span class="text-xs bg-indigo-900/80 text-indigo-300 px-2 py-0.5 rounded border border-indigo-700">PRO</span></h1>
       </div>
-      <div class="flex items-center gap-2 no-print">
-        <button onclick="window.print()" class="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg font-medium transition text-sm">Print</button>
-        <button onclick="downloadPDF()" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg font-medium transition text-sm">Download PDF</button>
-        <button onclick="shareInvoice()" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-lg font-medium transition text-sm">Share</button>
+
+      <!-- Auth & Actions -->
+      <div class="flex items-center gap-3 no-print">
+        <div id="auth-section" class="flex items-center gap-2 border-r border-slate-800 pr-3">
+          <button id="auth-btn" onclick="toggleAuthModal()" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
+            <span id="user-avatar" class="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xs">👤</span>
+            <span id="user-status-text">Log In / Sign Up</span>
+          </button>
+        </div>
+
+        <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 px-3.5 py-1.5 rounded-lg text-xs font-medium transition">Print</button>
+        <button onclick="downloadPDF()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-1.5 rounded-lg text-xs font-medium transition shadow-md">Download PDF</button>
+        <button onclick="shareInvoice()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-lg text-xs font-medium transition shadow-md">Share</button>
       </div>
     </div>
   </header>
 
-  <main class="max-w-6xl mx-auto p-4 grid grid-cols-1 lg:grid-cols-12 gap-6 my-6">
-    <!-- Form Controls Section -->
-    <section class="lg:col-span-6 space-y-6 no-print">
-      <!-- Profile & Settings -->
-      <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4">
-        <h2 class="text-lg font-bold text-indigo-300 border-b border-slate-700 pb-2">Business Profile</h2>
-        <div class="grid grid-cols-2 gap-3">
+  <main class="max-w-7xl mx-auto p-4 grid grid-cols-1 lg:grid-cols-12 gap-6 my-4">
+
+    <!-- Controls Section -->
+    <section class="lg:col-span-6 space-y-5 no-print">
+
+      <!-- Profile & Business Mode -->
+      <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800/80 shadow-xl space-y-4">
+        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+          <h2 class="text-base font-bold text-indigo-300">Business Profile</h2>
+          <span id="save-status" class="text-xs text-slate-500">Auto-saved locally</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block text-xs text-slate-400 mb-1">Business Name</label>
-            <input type="text" id="biz-name" oninput="updateInvoice()" placeholder="My Business" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm focus:outline-none focus:border-indigo-500" />
+            <input type="text" id="biz-name" oninput="updateProfile()" placeholder="Shifa Pharmacy" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-sm focus:outline-none focus:border-indigo-500 transition" />
           </div>
           <div>
             <label class="block text-xs text-slate-400 mb-1">Contact / Address</label>
-            <input type="text" id="biz-contact" oninput="updateInvoice()" placeholder="Phone / Address" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm focus:outline-none focus:border-indigo-500" />
+            <input type="text" id="biz-contact" oninput="updateProfile()" placeholder="0314 9972240" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-sm focus:outline-none focus:border-indigo-500 transition" />
           </div>
         </div>
+
         <div>
-          <label class="block text-xs text-slate-400 mb-1">Category</label>
-          <select id="biz-category" onchange="changeCategory()" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm focus:outline-none focus:border-indigo-500">
-            <option value="pharmacy">Pharmacy / Medical</option>
+          <label class="block text-xs text-slate-400 mb-1">Business Category</label>
+          <select id="biz-category" onchange="changeCategory()" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-sm focus:outline-none focus:border-indigo-500 transition">
+            <option value="pharmacy">Pharmacy / Medical Store</option>
             <option value="grocery">Grocery / Supermarket</option>
             <option value="general">General Store / Services</option>
           </select>
         </div>
       </div>
 
-      <!-- Customer Info -->
-      <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4">
-        <h2 class="text-lg font-bold text-indigo-300 border-b border-slate-700 pb-2">Customer Details</h2>
-        <div class="grid grid-cols-2 gap-3">
-          <input type="text" id="cust-name" oninput="updateInvoice()" placeholder="Customer Name" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm focus:outline-none focus:border-indigo-500" />
-          <input type="text" id="cust-phone" oninput="updateInvoice()" placeholder="Customer Phone" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm focus:outline-none focus:border-indigo-500" />
+      <!-- Customer Details & Invoice Metadata -->
+      <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800/80 shadow-xl space-y-4">
+        <h2 class="text-base font-bold text-indigo-300 border-b border-slate-800 pb-3">Invoice Details</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Customer Name</label>
+            <input type="text" id="cust-name" oninput="renderInvoice()" placeholder="Saeed" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-sm focus:outline-none focus:border-indigo-500 transition" />
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Customer Phone</label>
+            <input type="text" id="cust-phone" oninput="renderInvoice()" placeholder="03xx-xxxxxxx" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-sm focus:outline-none focus:border-indigo-500 transition" />
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Invoice Date</label>
+            <input type="date" id="inv-date" onchange="renderInvoice()" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-sm focus:outline-none focus:border-indigo-500 transition" />
+          </div>
         </div>
       </div>
 
-      <!-- Add Item Dynamic Form -->
-      <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4">
-        <h2 class="text-lg font-bold text-indigo-300 border-b border-slate-700 pb-2">Add Item</h2>
-        <div id="dynamic-inputs" class="grid grid-cols-2 gap-3">
-          <!-- Inputs will be dynamically rendered based on selected category -->
+      <!-- Add Multi-Item Form -->
+      <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800/80 shadow-xl space-y-4">
+        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+          <h2 class="text-base font-bold text-indigo-300">Add Item to Invoice</h2>
+          <span class="text-xs text-slate-400">Multiple items allowed</span>
         </div>
-        <button onclick="addItem()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 rounded-lg transition shadow-md">Add to Invoice</button>
+
+        <form onsubmit="event.preventDefault(); addItem();" class="space-y-3">
+          <div id="dynamic-inputs" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- Dynamic fields load here based on Category -->
+          </div>
+          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/20">
+            + Add Product / Item
+          </button>
+        </form>
       </div>
 
-      <!-- Taxes & Discounts -->
-      <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 grid grid-cols-2 gap-3">
+      <!-- Global Discounts & Taxes -->
+      <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800/80 shadow-xl grid grid-cols-2 gap-3">
         <div>
           <label class="block text-xs text-slate-400 mb-1">Tax (%)</label>
-          <input type="number" id="tax-rate" value="0" oninput="renderInvoice()" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm focus:outline-none focus:border-indigo-500" />
+          <input type="number" id="tax-rate" value="0" min="0" step="0.1" oninput="renderInvoice()" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-sm focus:outline-none focus:border-indigo-500 transition" />
         </div>
         <div>
-          <label class="block text-xs text-slate-400 mb-1">Discount ($)</label>
-          <input type="number" id="discount-val" value="0" oninput="renderInvoice()" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm focus:outline-none focus:border-indigo-500" />
+          <label class="block text-xs text-slate-400 mb-1">Flat Discount ($ / PKR)</label>
+          <input type="number" id="discount-val" value="0" min="0" step="0.1" oninput="renderInvoice()" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-sm focus:outline-none focus:border-indigo-500 transition" />
         </div>
       </div>
+
     </section>
 
     <!-- Invoice Preview Section -->
     <section class="lg:col-span-6">
-      <div id="invoice-preview" class="bg-white text-slate-800 p-6 rounded-xl shadow-2xl min-h-[500px] flex flex-col justify-between border border-slate-200">
+      <div id="invoice-preview" class="bg-white text-slate-900 p-6 sm:p-8 rounded-2xl shadow-2xl min-h-[600px] flex flex-col justify-between border border-slate-200">
         <div class="space-y-6">
-          <!-- Invoice Header -->
-          <div class="flex justify-between items-start border-b pb-4">
+
+          <!-- Bill Header -->
+          <div class="flex justify-between items-start border-b border-slate-200 pb-4">
             <div>
-              <h2 id="prev-biz-name" class="text-2xl font-bold text-slate-900">Your Business Name</h2>
-              <p id="prev-biz-contact" class="text-xs text-slate-500">Address & Contact Info</p>
+              <h2 id="prev-biz-name" class="text-2xl font-black text-slate-900">Shifa Pharmacy</h2>
+              <p id="prev-biz-contact" class="text-xs text-slate-500 mt-1">0314 9972240</p>
             </div>
             <div class="text-right">
-              <span id="category-badge" class="px-2 py-1 bg-indigo-100 text-indigo-800 text-xs font-bold rounded uppercase">PHARMACY</span>
-              <p class="text-xs text-slate-400 mt-2">Invoice #: RKB-<span id="inv-num">1001</span></p>
+              <span id="category-badge" class="px-2.5 py-1 bg-indigo-100 text-indigo-800 text-[10px] font-black rounded-full uppercase tracking-wider">PHARMACY</span>
+              <p class="text-xs font-semibold text-slate-600 mt-2">Invoice #: <span id="inv-num" class="text-indigo-600">RKB-1001</span></p>
+              <p class="text-xs text-slate-400">Date: <span id="prev-inv-date">2026-09-02</span></p>
             </div>
           </div>
 
           <!-- Billed To -->
-          <div class="bg-slate-50 p-3 rounded border border-slate-100">
-            <p class="text-xs text-slate-400 font-semibold uppercase">Billed To:</p>
-            <p id="prev-cust-name" class="font-bold text-sm text-slate-700">Client Name</p>
-            <p id="prev-cust-phone" class="text-xs text-slate-500">Client Contact Info</p>
+          <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Billed To:</p>
+            <p id="prev-cust-name" class="font-bold text-sm text-slate-800">Saeed</p>
+            <p id="prev-cust-phone" class="text-xs text-slate-500">Customer Phone</p>
           </div>
 
-          <!-- Items Table -->
+          <!-- Dynamic Multi-Item Table -->
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
               <thead>
-                <tr id="table-headers" class="border-b-2 border-slate-200 text-slate-600 uppercase font-semibold">
+                <tr id="table-headers" class="border-b-2 border-slate-200 text-slate-500 uppercase font-bold text-[11px] tracking-wider">
                   <!-- Dynamic Headers -->
                 </tr>
               </thead>
               <tbody id="items-list" class="divide-y divide-slate-100">
-                <!-- Dynamic Items -->
+                <!-- Multi-Item rows will render here -->
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- Totals & Summary -->
-        <div class="border-t pt-4 space-y-1 text-xs text-right mt-6">
-          <div class="flex justify-between text-slate-500"><span>Subtotal:</span><span id="subtotal-val">$0.00</span></div>
-          <div class="flex justify-between text-slate-500"><span>Tax:</span><span id="tax-val">$0.00</span></div>
-          <div class="flex justify-between text-slate-500"><span>Discount:</span><span id="discount-calc-val">-$0.00</span></div>
-          <div class="flex justify-between font-bold text-base text-slate-900 border-t pt-2 mt-1"><span>Total:</span><span id="grand-total">$0.00</span></div>
+        <!-- Totals & Calculations -->
+        <div class="border-t border-slate-200 pt-4 space-y-1.5 text-xs text-right mt-8">
+          <div class="flex justify-between text-slate-500"><span>Subtotal:</span><span id="subtotal-val" class="font-medium">$0.00</span></div>
+          <div class="flex justify-between text-slate-500"><span>Tax:</span><span id="tax-val" class="font-medium">$0.00</span></div>
+          <div class="flex justify-between text-slate-500"><span>Discount:</span><span id="discount-calc-val" class="font-medium text-emerald-600">-$0.00</span></div>
+          <div class="flex justify-between font-black text-lg text-slate-900 border-t border-slate-200 pt-2 mt-1">
+            <span>Total:</span>
+            <span id="grand-total" class="text-indigo-600">$0.00</span>
+          </div>
         </div>
       </div>
     </section>
   </main>
+
+  <!-- Login Modal -->
+  <div id="auth-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl w-full max-w-md shadow-2xl space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="text-lg font-bold text-slate-100">Account Log In</h3>
+        <button onclick="toggleAuthModal()" class="text-slate-400 hover:text-white">✕</button>
+      </div>
+      <p class="text-xs text-slate-400">Log in to save your history & business presets across sessions.</p>
+      <input type="email" id="user-email" placeholder="Email Address" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm focus:outline-none focus:border-indigo-500" />
+      <input type="password" id="user-pass" placeholder="Password" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm focus:outline-none focus:border-indigo-500" />
+      <button onclick="handleLogin()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 rounded-xl transition">Sign In / Register</button>
+    </div>
+  </div>
 
   <script>
     const CONFIGS = {
       pharmacy: {
         badge: 'PHARMACY',
         fields: [
-          { id: 'f1', label: 'Medicine Name', type: 'text' },
-          { id: 'f2', label: 'Batch No', type: 'text' },
-          { id: 'f3', label: 'Qty', type: 'number' },
-          { id: 'f4', label: 'Price', type: 'number' }
+          { id: 'f1', label: 'Medicine Name & Mg', type: 'text', placeholder: 'Risek 40mg' },
+          { id: 'f2', label: 'Batch No', type: 'text', placeholder: 'B-204' },
+          { id: 'f3', label: 'Qty', type: 'number', placeholder: '2' },
+          { id: 'f4', label: 'Price per Unit', type: 'number', placeholder: '50' }
         ],
-        headers: ['Medicine', 'Batch', 'Qty', 'Price', 'Total']
+        headers: ['Medicine Name', 'Batch', 'Qty', 'Price', 'Total']
       },
       grocery: {
         badge: 'GROCERY',
         fields: [
-          { id: 'f1', label: 'Item Name', type: 'text' },
-          { id: 'f2', label: 'Unit (kg/pcs)', type: 'text' },
-          { id: 'f3', label: 'Weight/Qty', type: 'number' },
-          { id: 'f4', label: 'Price/Unit', type: 'number' }
+          { id: 'f1', label: 'Item Name', type: 'text', placeholder: 'Cooking Oil' },
+          { id: 'f2', label: 'Unit (kg/ltr/pcs)', type: 'text', placeholder: '1 Ltr' },
+          { id: 'f3', label: 'Qty / Weight', type: 'number', placeholder: '3' },
+          { id: 'f4', label: 'Price / Unit', type: 'number', placeholder: '450' }
         ],
-        headers: ['Item', 'Unit', 'Qty', 'Price', 'Total']
+        headers: ['Item Name', 'Unit', 'Qty', 'Price', 'Total']
       },
       general: {
         badge: 'GENERAL',
         fields: [
-          { id: 'f1', label: 'Item/Service', type: 'text' },
-          { id: 'f2', label: 'Description', type: 'text' },
-          { id: 'f3', label: 'Qty', type: 'number' },
-          { id: 'f4', label: 'Rate', type: 'number' }
+          { id: 'f1', label: 'Item / Service Name', type: 'text', placeholder: 'Web Service' },
+          { id: 'f2', label: 'Description', type: 'text', placeholder: 'Monthly Maintenance' },
+          { id: 'f3', label: 'Qty', type: 'number', placeholder: '1' },
+          { id: 'f4', label: 'Rate / Price', type: 'number', placeholder: '1000' }
         ],
-        headers: ['Item', 'Desc', 'Qty', 'Rate', 'Total']
+        headers: ['Service/Item', 'Description', 'Qty', 'Rate', 'Total']
       }
     };
 
     let items = [];
+    let currentUser = null;
+
+    // Initialize Page
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('inv-date').valueAsDate = new Date();
+      changeCategory();
+      loadSavedProfile();
+    });
 
     function changeCategory() {
       const cat = document.getElementById('biz-category').value;
@@ -182,7 +245,7 @@
       container.innerHTML = config.fields.map(f => `
         <div>
           <label class="block text-xs text-slate-400 mb-1">${f.label}</label>
-          <input type="${f.type}" id="input-${f.id}" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm focus:outline-none focus:border-indigo-500" />
+          <input type="${f.type}" id="input-${f.id}" placeholder="${f.placeholder}" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-sm focus:outline-none focus:border-indigo-500 transition" />
         </div>
       `).join('');
 
@@ -192,15 +255,16 @@
     }
 
     function addItem() {
-      const f1 = document.getElementById('input-f1').value;
-      const f2 = document.getElementById('input-f2').value;
+      const f1 = document.getElementById('input-f1').value.trim();
+      const f2 = document.getElementById('input-f2').value.trim();
       const qty = parseFloat(document.getElementById('input-f3').value) || 0;
       const price = parseFloat(document.getElementById('input-f4').value) || 0;
 
-      if (!f1 || qty <= 0 || price <= 0) return;
+      if (!f1 || qty <= 0 || price < 0) return;
 
       items.push({ f1, f2, qty, price, total: qty * price });
-      
+
+      // Reset Inputs
       document.getElementById('input-f1').value = '';
       document.getElementById('input-f2').value = '';
       document.getElementById('input-f3').value = '';
@@ -214,39 +278,63 @@
       renderInvoice();
     }
 
-    function updateInvoice() {
-      document.getElementById('prev-biz-name').innerText = document.getElementById('biz-name').value || 'Your Business Name';
-      document.getElementById('prev-biz-contact').innerText = document.getElementById('biz-contact').value || 'Address & Contact Info';
-      document.getElementById('prev-cust-name').innerText = document.getElementById('cust-name').value || 'Client Name';
-      document.getElementById('prev-cust-phone').innerText = document.getElementById('cust-phone').value || 'Client Contact Info';
+    function updateProfile() {
+      const name = document.getElementById('biz-name').value;
+      const contact = document.getElementById('biz-contact').value;
+      
+      document.getElementById('prev-biz-name').innerText = name || 'Shifa Pharmacy';
+      document.getElementById('prev-biz-contact').innerText = contact || '0314 9972240';
+
+      localStorage.setItem('rakabill_profile', JSON.stringify({ name, contact }));
+    }
+
+    function loadSavedProfile() {
+      const saved = localStorage.getItem('rakabill_profile');
+      if (saved) {
+        const data = JSON.parse(saved);
+        if (data.name) document.getElementById('biz-name').value = data.name;
+        if (data.contact) document.getElementById('biz-contact').value = data.contact;
+        updateProfile();
+      }
     }
 
     function renderInvoice() {
       const cat = document.getElementById('biz-category').value;
       const config = CONFIGS[cat];
-      
-      // Render Headers
-      document.getElementById('table-headers').innerHTML = config.headers.map(h => `<th class="py-2">${h}</th>`).join('') + `<th class="py-2 text-right no-print">Action</th>`;
 
-      // Render Items
+      // Update Dates & Customer Text
+      document.getElementById('prev-cust-name').innerText = document.getElementById('cust-name').value || 'Saeed';
+      document.getElementById('prev-cust-phone').innerText = document.getElementById('cust-phone').value || 'Customer Phone';
+      document.getElementById('prev-inv-date').innerText = document.getElementById('inv-date').value;
+
+      // Render Headers
+      document.getElementById('table-headers').innerHTML = 
+        config.headers.map(h => `<th class="py-2.5">${h}</th>`).join('') + 
+        `<th class="py-2.5 text-right no-print">Action</th>`;
+
+      // Render Multi-Item Rows
       const list = document.getElementById('items-list');
       let subtotal = 0;
 
-      list.innerHTML = items.map((item, index) => {
-        subtotal += item.total;
-        return `
-          <tr class="border-b border-slate-50">
-            <td class="py-2 font-medium">${item.f1}</td>
-            <td class="py-2 text-slate-500">${item.f2}</td>
-            <td class="py-2">${item.qty}</td>
-            <td class="py-2">$${item.price.toFixed(2)}</td>
-            <td class="py-2">$${item.total.toFixed(2)}</td>
-            <td class="py-2 text-right no-print">
-              <button onclick="removeItem(${index})" class="text-red-500 font-bold hover:underline">X</button>
-            </td>
-          </tr>
-        `;
-      }).join('');
+      if (items.length === 0) {
+        list.innerHTML = `<tr><td colspan="6" class="py-4 text-center text-slate-400 font-medium">No items added yet. Add products above.</td></tr>`;
+      } else {
+        list.innerHTML = items.map((item, index) => {
+          subtotal += item.total;
+          return `
+            <tr class="border-b border-slate-100 hover:bg-slate-50 transition">
+              <td class="py-2.5 font-bold text-slate-800">${item.f1}</td>
+              <td class="py-2.5 text-slate-500">${item.f2 || '-'}</td>
+              <td class="py-2.5 font-semibold text-slate-700">${item.qty}</td>
+              <td class="py-2.5 text-slate-600">$${item.price.toFixed(2)}</td>
+              <td class="py-2.5 font-bold text-slate-900">$${item.total.toFixed(2)}</td>
+              <td class="py-2.5 text-right no-print">
+                <button onclick="removeItem(${index})" class="text-red-500 font-bold hover:text-red-700 px-2">✕</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
 
       // Calculations
       const taxRate = parseFloat(document.getElementById('tax-rate').value) || 0;
@@ -260,24 +348,37 @@
       document.getElementById('grand-total').innerText = `$${grandTotal.toFixed(2)}`;
     }
 
+    function toggleAuthModal() {
+      const modal = document.getElementById('auth-modal');
+      modal.classList.toggle('hidden');
+      modal.classList.toggle('flex');
+    }
+
+    function handleLogin() {
+      const email = document.getElementById('user-email').value;
+      if (email) {
+        currentUser = email;
+        document.getElementById('user-status-text').innerText = email.split('@')[0];
+        document.getElementById('user-avatar').innerText = email.charAt(0).toUpperCase();
+        toggleAuthModal();
+      }
+    }
+
     function shareInvoice() {
       if (navigator.share) {
         navigator.share({
           title: 'Rakabill Invoice',
-          text: `Invoice from ${document.getElementById('biz-name').value || 'Rakabill'}`,
+          text: `Invoice for ${document.getElementById('cust-name').value || 'Customer'}`,
           url: window.location.href
         }).catch(() => {});
       } else {
-        alert('Sharing is not supported on this device/browser.');
+        alert('Sharing link copied or send directly via browser controls.');
       }
     }
 
     function downloadPDF() {
       window.print();
     }
-
-    // Initialize
-    changeCategory();
   </script>
 </body>
 </html>
