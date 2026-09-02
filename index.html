@@ -1,502 +1,338 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rakabill - Dynamic Dashboard & Invoicing</title>
-    <!-- Tailwind CSS CDN -->
+    <title>RakaBill - Pharmacy Billing System</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-        }
-    </script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        .gradient-text {
-            background: linear-gradient(135deg, #0052FF 0%, #031B4E 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Fixed Print CSS Engine - Fixes Blank/Empty Print Issue */
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            #printableArea, #printableArea * {
-                visibility: visible;
-            }
-            #printableArea {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                display: block !important;
-            }
-            .no-print {
-                display: none !important;
-            }
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0b0f19; color: #f3f4f6; }
+        .bg-card { background: rgba(17, 24, 39, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .input-style { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; }
+        .input-style:focus { border-color: #a855f7; outline: none; }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans transition-colors duration-200">
+<body class="p-4 md:p-8 max-w-4xl mx-auto">
 
-    <!-- Header Navigation (Exact Original Structure + Dark Mode Toggle) -->
-    <header class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-3 flex items-center justify-between sticky top-0 z-50 no-print">
-        <!-- Exact Left Side Logo Pattern -->
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-12 bg-gradient-to-br from-blue-600 to-blue-900 rounded-lg relative flex items-center justify-center text-white font-bold text-xl shadow-md">
-                R
-                <span class="absolute top-0 right-0 w-3 h-3 bg-blue-400 rounded-bl-lg"></span>
-            </div>
-            <div class="text-2xl font-extrabold tracking-tight">
-                <span class="text-blue-600">Raka</span><span class="text-blue-950 dark:text-white">bill</span>
-            </div>
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">RakaBill</h1>
         </div>
+        <button id="profileBtn" onclick="toggleProfileModal()" class="w-10 h-10 rounded-full bg-purple-600/30 border border-purple-500/50 flex items-center justify-center text-purple-300 hover:bg-purple-600 hover:text-white transition">
+            <i class="fa-solid fa-user"></i>
+        </button>
+    </div>
 
-        <!-- User Profile & Controls -->
-        <div class="flex items-center gap-4">
-            <!-- Dark / Light Mode Toggle Switch -->
-            <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600">
-                <i id="themeIcon" class="fa-solid fa-moon"></i>
-            </button>
-
-            <div class="text-right hidden sm:block">
-                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100" id="userName">User Profile</p>
-                <p class="text-xs text-gray-500 dark:text-gray-400" id="userRole">Selected Business Type</p>
-            </div>
-            <select id="categorySelector" onchange="switchCategory(this.value)" class="bg-blue-50 dark:bg-gray-700 border border-blue-200 dark:border-gray-600 text-blue-900 dark:text-white font-medium text-sm rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-blue-500">
-                <optgroup label="Medical & Health">
-                    <option value="pharmacy">Pharmacy</option>
-                    <option value="ct_scan">CT Scan</option>
-                    <option value="mri">MRI</option>
-                    <option value="medical_lab">Medical Laboratory</option>
-                </optgroup>
-                <optgroup label="Food & Dining">
-                    <option value="restaurant">Restaurant</option>
-                    <option value="fast_food">Fast Food</option>
-                    <option value="bakers">Bakers & Sweets</option>
-                </optgroup>
-                <optgroup label="Retail & Shopping">
-                    <option value="groceries">Groceries</option>
-                    <option value="general_store">General Store</option>
-                    <option value="fruits_veg">Fruit & Vegetable</option>
-                    <option value="shopping_mall">Shopping Mall</option>
-                </optgroup>
-                <optgroup label="Electronics & Tech">
-                    <option value="electronics">Electronics</option>
-                    <option value="mobile_shop">Mobile Shop</option>
-                </optgroup>
-            </select>
-        </div>
-    </header>
-
-    <!-- User Dashboard Container -->
-    <main class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 no-print">
-
-        <!-- Form & Items Selector -->
-        <div class="lg:col-span-2 space-y-6">
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <div>
-                        <h1 class="text-xl font-bold text-gray-900 dark:text-white" id="dashboardTitle">Pharmacy Billing Dashboard</h1>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Add products/services specific to your category.</p>
-                    </div>
-                    <span id="categoryBadge" class="bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300 text-xs font-semibold px-3 py-1 rounded-full">Pharmacy</span>
-                </div>
-
-                <!-- Customer Details Input -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Customer / Patient Name</label>
-                        <input type="text" id="custName" placeholder="Customer Name" class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Contact Number</label>
-                        <input type="text" id="custPhone" placeholder="Phone Number" class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                </div>
-
-                <!-- Item Add Controls -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                    <div class="md:col-span-2">
-                        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Select / Search Item</label>
-                        <select id="itemDropdown" onchange="autoFillItemDetails()" class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                            <!-- Populated Dynamically -->
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Quantity / Count</label>
-                        <input type="number" id="itemQty" value="1" min="1" class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <div class="flex items-end">
-                        <button onclick="addItemToInvoice()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm p-2 rounded-lg transition-all flex items-center justify-center gap-2">
-                            <i class="fa-solid font-bold fa-plus"></i> Add to Invoice
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Item Dynamic Specs Info Box -->
-                <div id="itemDetailCard" class="bg-blue-50/50 dark:bg-gray-700/50 border border-blue-100 dark:border-gray-600 rounded-lg p-4 mb-6 hidden">
-                    <p class="text-xs font-bold text-blue-900 dark:text-blue-300 uppercase tracking-wide mb-1">Product Details & Specs</p>
-                    <div id="itemDetailContent" class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-gray-700 dark:text-gray-300">
-                        <!-- Dynamic details show here -->
-                    </div>
-                </div>
-
-                <!-- Invoice Table -->
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs uppercase border-b dark:border-gray-600">
-                                <th class="p-3">Item / Service Details</th>
-                                <th class="p-3">Price</th>
-                                <th class="p-3">Qty</th>
-                                <th class="p-3">Discount</th>
-                                <th class="p-3">Total</th>
-                                <th class="p-3 text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="invoiceTableBody" class="text-sm divide-y dark:divide-gray-700">
-                            <!-- Items rendered here -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Profile History Section (Added as an Extension) -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-                    <div>
-                        <h2 class="text-lg font-bold text-gray-900 dark:text-white">Profile Invoice History</h2>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Search and view previous invoices created in this profile.</p>
-                    </div>
-                    <input type="text" id="searchHistory" onkeyup="renderHistory()" placeholder="Search Invoice ID or Name..." class="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-64">
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs uppercase border-b dark:border-gray-600">
-                                <th class="p-3">Invoice ID</th>
-                                <th class="p-3">Customer</th>
-                                <th class="p-3">Category</th>
-                                <th class="p-3">Total</th>
-                                <th class="p-3">Date</th>
-                                <th class="p-3 text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="historyTableBody" class="text-sm divide-y dark:divide-gray-700">
-                            <!-- History items rendered here -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Live Invoice Preview & Actions -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 flex flex-col justify-between h-fit sticky top-20">
-            <div>
-                <div class="border-b border-gray-200 dark:border-gray-700 pb-4 mb-4 flex justify-between items-center">
-                    <div>
-                        <h2 class="font-extrabold text-blue-900 dark:text-blue-400 text-lg">INVOICE PREVIEW</h2>
-                        <p class="text-xs text-gray-400">Rakabill Automated System</p>
-                    </div>
-                    <i class="fa-solid fa-receipt text-2xl text-blue-600"></i>
-                </div>
-
-                <div class="space-y-3 text-sm">
-                    <div class="flex justify-between text-gray-600 dark:text-gray-400">
-                        <span>Subtotal</span>
-                        <span id="subTotal">Rs. 0.00</span>
-                    </div>
-                    <div class="flex justify-between text-gray-600 dark:text-gray-400">
-                        <span>Total Discounts</span>
-                        <span id="totalDiscount" class="text-green-600 dark:text-green-400">- Rs. 0.00</span>
-                    </div>
-                    <div class="flex justify-between text-gray-600 dark:text-gray-400">
-                        <span>Tax / Service Charges</span>
-                        <span id="taxCharge">Rs. 0.00</span>
-                    </div>
-                    <div class="border-t border-gray-200 dark:border-gray-700 pt-3 flex justify-between font-extrabold text-lg text-gray-900 dark:text-white">
-                        <span>Grand Total</span>
-                        <span id="grandTotal" class="text-blue-600 dark:text-blue-400">Rs. 0.00</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-8 space-y-3">
-                <button onclick="saveAndPrintInvoice()" class="w-full bg-blue-900 hover:bg-blue-950 text-white font-medium py-2.5 rounded-lg text-sm transition-all flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-print"></i> Save & Print Category Invoice
-                </button>
-            </div>
-        </div>
-    </main>
-
-    <!-- Hidden Printable Area (Fills on Print to prevent Empty PDF issue) -->
-    <div id="printableArea" class="hidden p-8 bg-white text-black">
-        <div class="flex justify-between items-center border-b pb-4 mb-4">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-12 bg-blue-900 rounded-lg flex items-center justify-center text-white font-bold text-xl">R</div>
-                <div class="text-2xl font-extrabold text-blue-900">Rakabill</div>
-            </div>
-            <div class="text-right">
-                <h2 class="text-xl font-bold uppercase" id="printCategory">INVOICE</h2>
-                <p class="text-xs text-gray-600" id="printInvoiceId">Invoice: #</p>
-                <p class="text-xs text-gray-600" id="printDate">Date: </p>
-            </div>
-        </div>
-        <div class="mb-6 text-sm">
-            <p><strong>Customer Name:</strong> <span id="printCustName">Guest</span></p>
-            <p><strong>Contact:</strong> <span id="printCustPhone">N/A</span></p>
-        </div>
-        <table class="w-full text-left border-collapse text-xs mb-6">
-            <thead>
-                <tr class="bg-gray-100 border-b">
-                    <th class="p-2">Item / Service</th>
-                    <th class="p-2">Price</th>
-                    <th class="p-2">Qty</th>
-                    <th class="p-2">Discount</th>
-                    <th class="p-2">Total</th>
-                </tr>
-            </thead>
-            <tbody id="printTableBody"></tbody>
-        </table>
-        <div class="text-right text-sm space-y-1">
-            <p>Subtotal: <span id="printSubTotal">Rs. 0</span></p>
-            <p>Total Discount: <span id="printDiscount">Rs. 0</span></p>
-            <p class="text-lg font-bold border-t pt-2">Grand Total: <span id="printGrandTotal">Rs. 0</span></p>
+    <!-- Search & History -->
+    <div class="bg-card p-4 rounded-xl mb-6 flex flex-col gap-3">
+        <div class="relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-gray-400"></i>
+            <input type="text" id="searchInput" onkeyup="searchInvoice()" placeholder="Search Invoice # or Patient Name..." class="w-full pl-10 pr-4 py-2 rounded-lg input-style">
         </div>
     </div>
 
-    <!-- App Logic JavaScript -->
+    <!-- Patient & Bill Info -->
+    <div class="bg-card p-5 rounded-xl mb-6">
+        <h2 class="text-lg font-semibold text-purple-300 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-hospital-user"></i> Patient & Bill Info
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="text-xs text-gray-400 mb-1 block">Patient Name</label>
+                <input type="text" id="custName" placeholder="e.g. Ali Ahmed" class="w-full p-2.5 rounded-lg input-style">
+            </div>
+            <div>
+                <label class="text-xs text-gray-400 mb-1 block">Contact Number</label>
+                <input type="text" id="custNum" placeholder="e.g. +92 300 1234567" class="w-full p-2.5 rounded-lg input-style">
+            </div>
+            <div>
+                <label class="text-xs text-gray-400 mb-1 block">Invoice Date</label>
+                <input type="date" id="invDate" class="w-full p-2.5 rounded-lg input-style">
+            </div>
+            <div>
+                <label class="text-xs text-gray-400 mb-1 block">Invoice # (Auto)</label>
+                <input type="text" id="invNumber" readonly class="w-full p-2.5 rounded-lg input-style bg-slate-900/50 text-purple-400 font-bold">
+            </div>
+        </div>
+    </div>
+
+    <!-- Items Entry -->
+    <div class="bg-card p-5 rounded-xl mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold text-purple-300 flex items-center gap-2">
+                <i class="fa-solid fa-capsules"></i> Pharmacy Items Entry
+            </h2>
+            <button onclick="addItemRow()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-sm flex items-center gap-1">
+                <i class="fa-solid fa-plus"></i> Add Item
+            </button>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead>
+                    <tr class="border-b border-slate-700 text-gray-400">
+                        <th class="p-2">ITEM NAME</th>
+                        <th class="p-2">MG/STR</th>
+                        <th class="p-2 w-20">QTY</th>
+                        <th class="p-2 w-24">PRICE</th>
+                        <th class="p-2 w-10"></th>
+                    </tr>
+                </thead>
+                <tbody id="itemsBody"></tbody>
+            </table>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-slate-700">
+            <div>
+                <label class="text-xs text-gray-400 block mb-1">Discount (PKR)</label>
+                <input type="number" id="discountInput" value="0" oninput="updateTotals()" class="w-full p-2 rounded-lg input-style">
+            </div>
+            <div>
+                <label class="text-xs text-gray-400 block mb-1">Tax Rate (%)</label>
+                <input type="number" id="taxInput" value="0" oninput="updateTotals()" class="w-full p-2 rounded-lg input-style">
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-center gap-4 mt-6">
+            <button onclick="downloadPDF()" class="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full w-12 h-12 flex items-center justify-center shadow-lg"><i class="fa-solid fa-download"></i></button>
+            <button onclick="printInvoice()" class="bg-emerald-600 hover:bg-emerald-700 text-white p-3 rounded-full w-12 h-12 flex items-center justify-center shadow-lg"><i class="fa-solid fa-print"></i></button>
+            <button onclick="shareInvoice()" class="bg-amber-600 hover:bg-amber-700 text-white p-3 rounded-full w-12 h-12 flex items-center justify-center shadow-lg"><i class="fa-solid fa-share-nodes"></i></button>
+        </div>
+    </div>
+
+    <!-- Live Preview -->
+    <div id="invoicePreview" class="bg-white text-slate-800 p-6 rounded-xl shadow-2xl relative">
+        <div class="flex justify-between items-start border-b pb-4 mb-4">
+            <div>
+                <h2 id="storeNamePreview" class="text-xl font-bold text-purple-900">SHIFA PHARMACY</h2>
+                <p id="storeSubPreview" class="text-xs text-gray-500">Pharmacy & Medical Store</p>
+                <p id="storeAddressPreview" class="text-xs text-gray-500">Main Bazar, Peshawar, Pakistan</p>
+                <p id="storePhonePreview" class="text-xs text-gray-500">Phone: +92 300 1234567 | Lic: PHARM-8890</p>
+            </div>
+            <span class="bg-purple-100 text-purple-800 text-xs font-bold px-2.5 py-1 rounded">INVOICE</span>
+        </div>
+
+        <div class="flex justify-between text-xs mb-4">
+            <div>
+                <p class="text-gray-400">PATIENT INFO</p>
+                <p id="dispName" class="font-bold text-slate-700">Ali Ahmed</p>
+                <p id="dispNum" class="text-gray-600">+92 300 0000000</p>
+            </div>
+            <div class="text-right">
+                <p class="text-gray-400">BILL META</p>
+                <p class="font-bold">Inv #: <span id="dispInvNum" class="text-purple-700">101</span></p>
+                <p>Date: <span id="dispDate">-</span></p>
+            </div>
+        </div>
+
+        <table class="w-full text-left text-xs mb-4">
+            <thead>
+                <tr class="bg-purple-900 text-white">
+                    <th class="p-2">#</th>
+                    <th class="p-2">MEDICINE DESCRIPTION</th>
+                    <th class="p-2">MG/STR</th>
+                    <th class="p-2">QTY</th>
+                    <th class="p-2">PRICE</th>
+                    <th class="p-2 text-right">TOTAL</th>
+                </tr>
+            </thead>
+            <tbody id="previewBody"></tbody>
+        </table>
+
+        <div class="flex justify-end text-xs mb-6">
+            <div class="w-48 space-y-1">
+                <div class="flex justify-between"><span>Subtotal:</span><span id="dispSubtotal" class="font-bold">PKR 0.00</span></div>
+                <div class="flex justify-between text-red-500"><span>Discount:</span><span id="dispDiscount">- PKR 0.00</span></div>
+                <div class="flex justify-between"><span>Tax:</span><span id="dispTax">+ PKR 0.00</span></div>
+                <div class="flex justify-between text-sm font-bold border-t pt-1 border-slate-300"><span>Grand Total:</span><span id="dispGrandTotal" class="text-purple-900">PKR 0.00</span></div>
+            </div>
+        </div>
+
+        <div class="text-center text-[10px] text-gray-400 border-t pt-3 mt-4">
+            Powered by RakaBill
+        </div>
+    </div>
+
+    <!-- Profile Setup Modal -->
+    <div id="profileModal" class="fixed inset-0 bg-black/80 flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-slate-900 p-6 rounded-xl w-full max-w-md border border-slate-700">
+            <h3 class="text-lg font-bold text-purple-400 mb-4">Business Profile Setup</h3>
+            <div class="space-y-3">
+                <div>
+                    <label class="text-xs text-gray-400">Business Name</label>
+                    <input type="text" id="setupStoreName" placeholder="Pharmacy Name" class="w-full p-2 rounded input-style">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400">Sub-heading</label>
+                    <input type="text" id="setupStoreSub" placeholder="Pharmacy & Medical Store" class="w-full p-2 rounded input-style">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400">Address</label>
+                    <input type="text" id="setupStoreAddress" placeholder="Address..." class="w-full p-2 rounded input-style">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400">Phone & License</label>
+                    <input type="text" id="setupStorePhone" placeholder="Phone & License Details" class="w-full p-2 rounded input-style">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 mt-5">
+                <button onclick="toggleProfileModal()" class="px-4 py-2 bg-gray-700 text-white text-sm rounded">Cancel</button>
+                <button onclick="saveProfileSettings()" class="px-4 py-2 bg-purple-600 text-white text-sm rounded">Save Profile</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        const categoryDatabase = {
-            pharmacy: [
-                { id: 1, name: "Paracetamol (Panadol)", mg: "500mg", price: 30, discount: 5, info: "Dose: 1-2 tablets | Type: Tablet" },
-                { id: 2, name: "Amoxicillin (Augmentin)", mg: "625mg", price: 250, discount: 10, info: "Antibiotic | Type: Coated Tablet" },
-                { id: 3, name: "Omeprazole (Risek)", mg: "20mg", price: 180, discount: 12, info: "Antacid | Capsule" }
-            ],
-            ct_scan: [
-                { id: 101, name: "CT Brain (Plain)", mg: "N/A", price: 4500, discount: 500, info: "Scan Type: Non-Contrast | Region: Head" },
-                { id: 102, name: "CT Abdomen with Contrast", mg: "N/A", price: 9500, discount: 1000, info: "Requires Fasting | Region: Abdominal" },
-                { id: 103, name: "CT KUB (Kidney, Ureter, Bladder)", mg: "N/A", price: 6000, discount: 500, info: "Renal Tract Evaluation" }
-            ],
-            mri: [
-                { id: 201, name: "MRI Brain Contrast", mg: "N/A", price: 12000, discount: 1000, info: "3T High Resolution" },
-                { id: 202, name: "MRI Lumbar Spine", mg: "N/A", price: 11000, discount: 800, info: "Spine & Disc Structure" }
-            ],
-            restaurant: [
-                { id: 301, name: "Chicken Karahi (Full)", mg: "1 KG", price: 1800, discount: 0, info: "Spice Level: Medium | Serves: 4" },
-                { id: 302, name: "Chicken Biryani", mg: "Single", price: 350, discount: 20, info: "Basmati Rice | Includes Raita" }
-            ],
-            groceries: [
-                { id: 401, name: "Refined Cooking Oil 5L", mg: "5 Liters", price: 2600, discount: 50, info: "Brand: Premium Pure" },
-                { id: 402, name: "Basmati Rice Super", mg: "5 KG", price: 1750, discount: 100, info: "A-Grade Long Grain" }
-            ]
-        };
+        let currentInvoiceNum = parseInt(localStorage.getItem('lastInvNum') || '101');
 
-        let currentInvoice = [];
-        let invoiceHistory = JSON.parse(localStorage.getItem('rakabill_history')) || [];
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('invDate').valueAsDate = new Date();
+            document.getElementById('invNumber').value = currentInvoiceNum;
+            loadProfileSettings();
+            addItemRow();
+            setupRealtimeListeners();
+            updateTotals();
+        });
 
-        function toggleDarkMode() {
-            document.documentElement.classList.toggle('dark');
-            const icon = document.getElementById('themeIcon');
-            icon.classList.toggle('fa-moon');
-            icon.classList.toggle('fa-sun');
+        function setupRealtimeListeners() {
+            ['custName', 'custNum', 'invDate'].forEach(id => {
+                document.getElementById(id).addEventListener('input', syncMeta);
+            });
         }
 
-        function switchCategory(cat) {
-            document.getElementById('dashboardTitle').innerText = cat.replace('_', ' ').toUpperCase() + " Dashboard";
-            document.getElementById('userRole').innerText = "Active Role: " + cat.replace('_', ' ').toUpperCase();
-            document.getElementById('categoryBadge').innerText = cat.replace('_', ' ').toUpperCase();
+        function syncMeta() {
+            document.getElementById('dispName').innerText = document.getElementById('custName').value || 'Patient Name';
+            document.getElementById('dispNum').innerText = document.getElementById('custNum').value || '+92 300 0000000';
+            document.getElementById('dispDate').innerText = document.getElementById('invDate').value || '-';
+            document.getElementById('dispInvNum').innerText = document.getElementById('invNumber').value;
+        }
+
+        function addItemRow() {
+            const tbody = document.getElementById('itemsBody');
+            const row = document.createElement('tr');
+            row.className = "border-b border-slate-800/50";
+            row.innerHTML = `
+                <td class="p-1.5"><input type="text" placeholder="Medicine" class="item-name w-full p-1.5 rounded input-style text-xs" oninput="updateTotals()"></td>
+                <td class="p-1.5"><input type="text" placeholder="500mg" class="item-mg w-full p-1.5 rounded input-style text-xs"></td>
+                <td class="p-1.5"><input type="number" value="1" min="1" class="item-qty w-full p-1.5 rounded input-style text-xs" oninput="updateTotals()"></td>
+                <td class="p-1.5"><input type="number" value="0" min="0" class="item-price w-full p-1.5 rounded input-style text-xs" oninput="updateTotals()"></td>
+                <td class="p-1.5 text-center"><button onclick="this.closest('tr').remove(); updateTotals();" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-trash"></i></button></td>
+            `;
+            tbody.appendChild(row);
+            updateTotals();
+        }
+
+        function updateTotals() {
+            syncMeta();
+            const names = document.querySelectorAll('.item-name');
+            const mgs = document.querySelectorAll('.item-mg');
+            const qtys = document.querySelectorAll('.item-qty');
+            const prices = document.querySelectorAll('.item-price');
             
-            const dropdown = document.getElementById('itemDropdown');
-            dropdown.innerHTML = '<option value="">-- Select Item/Service --</option>';
+            const previewBody = document.getElementById('previewBody');
+            previewBody.innerHTML = '';
             
-            const items = categoryDatabase[cat] || [];
-            items.forEach(item => {
-                dropdown.innerHTML += `<option value="${item.id}">${item.name} (${item.mg !== 'N/A' ? item.mg : ''}) - Rs.${item.price}</option>`;
+            let subtotal = 0;
+
+            names.forEach((item, i) => {
+                const nameVal = item.value;
+                const mgVal = mgs[i].value;
+                const qtyVal = parseFloat(qtys[i].value) || 0;
+                const priceVal = parseFloat(prices[i].value) || 0;
+                const lineTotal = qtyVal * priceVal;
+                subtotal += lineTotal;
+
+                if (nameVal) {
+                    previewBody.innerHTML += `
+                        <tr class="border-b">
+                            <td class="p-2">${i + 1}</td>
+                            <td class="p-2 font-semibold">${nameVal}</td>
+                            <td class="p-2">${mgVal}</td>
+                            <td class="p-2">${qtyVal}</td>
+                            <td class="p-2">${priceVal.toFixed(2)}</td>
+                            <td class="p-2 text-right font-bold">${lineTotal.toFixed(2)}</td>
+                        </tr>
+                    `;
+                }
             });
 
-            currentInvoice = [];
-            renderInvoice();
-            renderHistory();
+            const discount = parseFloat(document.getElementById('discountInput').value) || 0;
+            const taxRate = parseFloat(document.getElementById('taxInput').value) || 0;
+            const tax = ((subtotal - discount) * taxRate) / 100;
+            const grandTotal = Math.max(0, subtotal - discount + tax);
+
+            document.getElementById('dispSubtotal').innerText = `PKR ${subtotal.toFixed(2)}`;
+            document.getElementById('dispDiscount').innerText = `- PKR ${discount.toFixed(2)}`;
+            document.getElementById('dispTax').innerText = `+ PKR ${tax.toFixed(2)}`;
+            document.getElementById('dispGrandTotal').innerText = `PKR ${grandTotal.toFixed(2)}`;
         }
 
-        function autoFillItemDetails() {
-            const cat = document.getElementById('categorySelector').value;
-            const itemId = document.getElementById('itemDropdown').value;
-            const detailCard = document.getElementById('itemDetailCard');
-            const detailContent = document.getElementById('itemDetailContent');
-
-            if (!itemId) {
-                detailCard.classList.add('hidden');
-                return;
-            }
-
-            const item = (categoryDatabase[cat] || []).find(i => i.id == itemId);
-            if (item) {
-                detailContent.innerHTML = `
-                    <div><strong>Name:</strong> ${item.name}</div>
-                    <div><strong>Mg/Spec:</strong> ${item.mg}</div>
-                    <div><strong>Price:</strong> Rs. ${item.price}</div>
-                    <div><strong>Details:</strong> ${item.info}</div>
-                `;
-                detailCard.classList.remove('hidden');
-            }
+        function toggleProfileModal() {
+            document.getElementById('profileModal').classList.toggle('hidden');
         }
 
-        function addItemToInvoice() {
-            const cat = document.getElementById('categorySelector').value;
-            const itemId = document.getElementById('itemDropdown').value;
-            const qty = parseInt(document.getElementById('itemQty').value) || 1;
-
-            if (!itemId) return alert("Please select an item first.");
-
-            const item = (categoryDatabase[cat] || []).find(i => i.id == itemId);
-            const existing = currentInvoice.find(i => i.id == itemId);
-            
-            if (existing) {
-                existing.qty += qty;
-            } else {
-                currentInvoice.push({ ...item, qty });
-            }
-
-            renderInvoice();
-        }
-
-        function removeItem(id) {
-            currentInvoice = currentInvoice.filter(i => i.id !== id);
-            renderInvoice();
-        }
-
-        function renderInvoice() {
-            const tbody = document.getElementById('invoiceTableBody');
-            tbody.innerHTML = '';
-            let subtotal = 0, totalDiscount = 0;
-
-            currentInvoice.forEach(item => {
-                const itemTotal = (item.price - item.discount) * item.qty;
-                subtotal += item.price * item.qty;
-                totalDiscount += item.discount * item.qty;
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td class="p-3">
-                            <p class="font-bold text-gray-900 dark:text-white">${item.name}</p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">${item.mg !== 'N/A' ? 'Spec: ' + item.mg + ' | ' : ''}${item.info}</p>
-                        </td>
-                        <td class="p-3">Rs. ${item.price}</td>
-                        <td class="p-3">${item.qty}</td>
-                        <td class="p-3 text-green-600 dark:text-green-400">Rs. ${item.discount * item.qty}</td>
-                        <td class="p-3 font-semibold">Rs. ${itemTotal}</td>
-                        <td class="p-3 text-center">
-                            <button onclick="removeItem(${item.id})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            const grandTotal = subtotal - totalDiscount;
-            document.getElementById('subTotal').innerText = `Rs. ${subtotal.toFixed(2)}`;
-            document.getElementById('totalDiscount').innerText = `- Rs. ${totalDiscount.toFixed(2)}`;
-            document.getElementById('grandTotal').innerText = `Rs. ${grandTotal.toFixed(2)}`;
-        }
-
-        function saveAndPrintInvoice() {
-            if (currentInvoice.length === 0) return alert("Invoice is empty!");
-
-            const invId = "RKB-" + Math.floor(100000 + Math.random() * 900000);
-            const custName = document.getElementById('custName').value || "Guest";
-            const custPhone = document.getElementById('custPhone').value || "N/A";
-            const cat = document.getElementById('categorySelector').value;
-            
-            let subtotal = 0, totalDiscount = 0;
-            currentInvoice.forEach(i => {
-                subtotal += i.price * i.qty;
-                totalDiscount += i.discount * i.qty;
-            });
-
-            const record = {
-                id: invId,
-                custName,
-                custPhone,
-                category: cat,
-                items: currentInvoice,
-                subtotal,
-                totalDiscount,
-                grandTotal: subtotal - totalDiscount,
-                date: new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString()
+        function saveProfileSettings() {
+            const profile = {
+                name: document.getElementById('setupStoreName').value,
+                sub: document.getElementById('setupStoreSub').value,
+                address: document.getElementById('setupStoreAddress').value,
+                phone: document.getElementById('setupStorePhone').value
             };
+            localStorage.setItem('rakaProfile', JSON.stringify(profile));
+            loadProfileSettings();
+            toggleProfileModal();
+        }
 
-            invoiceHistory.unshift(record);
-            localStorage.setItem('rakabill_history', JSON.stringify(invoiceHistory));
+        function loadProfileSettings() {
+            const saved = localStorage.getItem('rakaProfile');
+            if (saved) {
+                const p = JSON.parse(saved);
+                if (p.name) document.getElementById('storeNamePreview').innerText = p.name;
+                if (p.sub) document.getElementById('storeSubPreview').innerText = p.sub;
+                if (p.address) document.getElementById('storeAddressPreview').innerText = p.address;
+                if (p.phone) document.getElementById('storePhonePreview').innerText = p.phone;
+            }
+        }
 
-            // Populate Print Template
-            document.getElementById('printCategory').innerText = cat.replace('_', ' ').toUpperCase() + " INVOICE";
-            document.getElementById('printInvoiceId').innerText = "Invoice: " + invId;
-            document.getElementById('printDate').innerText = "Date: " + record.date;
-            document.getElementById('printCustName').innerText = custName;
-            document.getElementById('printCustPhone').innerText = custPhone;
+        function downloadPDF() {
+            const element = document.getElementById('invoicePreview');
+            html2pdf().set({
+                margin: 0.3,
+                filename: `Invoice_${document.getElementById('invNumber').value}.pdf`,
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            }).from(element).save();
+            incrementInvoice();
+        }
 
-            const printTbody = document.getElementById('printTableBody');
-            printTbody.innerHTML = '';
-            currentInvoice.forEach(i => {
-                printTbody.innerHTML += `
-                    <tr class="border-b">
-                        <td class="p-2">${i.name}</td>
-                        <td class="p-2">Rs. ${i.price}</td>
-                        <td class="p-2">${i.qty}</td>
-                        <td class="p-2">Rs. ${i.discount * i.qty}</td>
-                        <td class="p-2">Rs. ${(i.price - i.discount) * i.qty}</td>
-                    </tr>
-                `;
-            });
-
-            document.getElementById('printSubTotal').innerText = "Rs. " + subtotal;
-            document.getElementById('printDiscount').innerText = "Rs. " + totalDiscount;
-            document.getElementById('printGrandTotal').innerText = "Rs. " + (subtotal - totalDiscount);
-
+        function printInvoice() {
             window.print();
-            renderHistory();
+            incrementInvoice();
         }
 
-        function renderHistory() {
-            const tbody = document.getElementById('historyTableBody');
-            const search = document.getElementById('searchHistory').value.toLowerCase();
-            tbody.innerHTML = '';
-
-            const filtered = invoiceHistory.filter(h => h.id.toLowerCase().includes(search) || h.custName.toLowerCase().includes(search));
-
-            filtered.forEach(h => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td class="p-3 font-semibold text-blue-600 dark:text-blue-400">${h.id}</td>
-                        <td class="p-3">${h.custName}</td>
-                        <td class="p-3 uppercase text-xs">${h.category.replace('_', ' ')}</td>
-                        <td class="p-3 font-bold">Rs. ${h.grandTotal}</td>
-                        <td class="p-3 text-xs text-gray-500 dark:text-gray-400">${h.date}</td>
-                        <td class="p-3 text-center">
-                            <button onclick="reprintInvoice('${h.id}')" class="text-blue-600 hover:text-blue-800 dark:text-blue-400"><i class="fa-solid fa-print"></i> Print</button>
-                        </td>
-                    </tr>
-                `;
-            });
+        function shareInvoice() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'RakaBill Invoice',
+                    text: `Invoice #${document.getElementById('invNumber').value} - Total: ${document.getElementById('dispGrandTotal').innerText}`
+                });
+            } else {
+                alert(`Invoice #${document.getElementById('invNumber').value} ready to share!`);
+            }
+            incrementInvoice();
         }
 
-        function reprintInvoice(id) {
-            const rec = invoiceHistory.find(h => h.id === id);
-            if (!rec) return;
-
-            currentInvoice = rec.items;
-            document.getElementById('custName').value = rec.custName;
-            document.getElementById('custPhone').value = rec.custPhone;
-            saveAndPrintInvoice();
+        function incrementInvoice() {
+            currentInvoiceNum++;
+            localStorage.setItem('lastInvNum', currentInvoiceNum);
+            document.getElementById('invNumber').value = currentInvoiceNum;
+            syncMeta();
         }
-
-        // Initialize on Load
-        switchCategory('pharmacy');
     </script>
 </body>
 </html>
