@@ -3,187 +3,254 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RakaBill - Complete Billing System</title>
+  <title>RakaBill - Premium Animated Billing Software</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  
   <style>
-    /* Premium 3D / Overlay / Glow Effects */
-    .glow-card {
-      background: rgba(255, 255, 255, 0.95);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 0 20px rgba(59, 130, 246, 0.15);
-      border: 1px solid rgba(226, 232, 240, 0.8);
-      backdrop-filter: blur(10px);
-    }
-    
-    .input-3d {
-      background: #f8fafc;
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
-      border: 1px solid #cbd5e1;
-      transition: all 0.2s ease-in-out;
-    }
-    
-    .input-3d:focus {
-      background: #ffffff;
-      box-shadow: inset 0 1px 2px rgba(0,0,0,0.02), 0 0 0 3px rgba(59, 130, 246, 0.3);
-      border-color: #3b82f6;
+    /* Animated Gradient Background */
+    body {
+      background: linear-gradient(-45deg, #0f172a, #1e1b4b, #2e1065, #0f172a);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      color: #f8fafc;
     }
 
-    .btn-3d-blue {
-      background: linear-gradient(145deg, #3b82f6, #1d4ed8);
-      box-shadow: 0 6px 0 #1e40af, 0 10px 15px rgba(59, 130, 246, 0.4);
-      transition: all 0.15s ease;
-    }
-    .btn-3d-blue:hover {
-      background: linear-gradient(145deg, #60a5fa, #2563eb);
-    }
-    .btn-3d-blue:active {
-      transform: translateY(4px);
-      box-shadow: 0 2px 0 #1e40af, 0 5px 10px rgba(59, 130, 246, 0.3);
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
-    .btn-3d-green {
-      background: linear-gradient(145deg, #10b981, #047857);
-      box-shadow: 0 6px 0 #065f46, 0 10px 15px rgba(16, 185, 129, 0.4);
-      transition: all 0.15s ease;
+    /* 3D Glassmorphism Overlay Cards */
+    .glow-3d-card {
+      background: rgba(30, 27, 75, 0.65);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(168, 85, 247, 0.25);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 
+                  0 0 30px rgba(168, 85, 247, 0.15);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    .btn-3d-green:hover {
-      background: linear-gradient(145deg, #34d399, #059669);
+
+    .glow-3d-card:hover {
+      transform: translateY(-5px) rotateX(1deg) rotateY(1deg);
+      border-color: rgba(168, 85, 247, 0.5);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 
+                  0 0 40px rgba(168, 85, 247, 0.3);
     }
-    .btn-3d-green:active {
+
+    /* Animated 3D Buttons */
+    .btn-3d {
+      position: relative;
+      transition: all 0.2s ease;
+      transform-style: preserve-3d;
+    }
+    
+    .btn-3d-purple {
+      background: linear-gradient(135deg, #a855f7, #6b21a8);
+      box-shadow: 0 6px 0 #4c1d95, 0 10px 20px rgba(168, 85, 247, 0.4);
+    }
+    .btn-3d-purple:hover {
+      background: linear-gradient(135deg, #c084fc, #7e22ce);
+    }
+    .btn-3d-purple:active {
       transform: translateY(4px);
-      box-shadow: 0 2px 0 #065f46, 0 5px 10px rgba(16, 185, 129, 0.3);
+      box-shadow: 0 2px 0 #4c1d95, 0 5px 10px rgba(168, 85, 247, 0.3);
+    }
+
+    .btn-3d-emerald {
+      background: linear-gradient(135deg, #10b981, #047857);
+      box-shadow: 0 6px 0 #064e3b, 0 10px 20px rgba(16, 185, 129, 0.4);
+    }
+    .btn-3d-emerald:hover {
+      background: linear-gradient(135deg, #34d399, #059669);
+    }
+    .btn-3d-emerald:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #064e3b, 0 5px 10px rgba(16, 185, 129, 0.3);
     }
 
     .btn-3d-amber {
-      background: linear-gradient(145deg, #f59e0b, #b45309);
-      box-shadow: 0 6px 0 #78350f, 0 10px 15px rgba(245, 158, 11, 0.4);
-      transition: all 0.15s ease;
+      background: linear-gradient(135deg, #f59e0b, #b45309);
+      box-shadow: 0 6px 0 #78350f, 0 10px 20px rgba(245, 158, 11, 0.4);
     }
     .btn-3d-amber:hover {
-      background: linear-gradient(145deg, #fbbf24, #d97706);
+      background: linear-gradient(135deg, #fbbf24, #d97706);
     }
     .btn-3d-amber:active {
       transform: translateY(4px);
       box-shadow: 0 2px 0 #78350f, 0 5px 10px rgba(245, 158, 11, 0.3);
     }
 
-    /* Print Specific Styling */
+    /* Custom 3D Inputs */
+    .input-3d {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(168, 85, 247, 0.2);
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
+      color: #f8fafc;
+      transition: all 0.3s ease;
+    }
+    .input-3d:focus {
+      border-color: #c084fc;
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3), 0 0 15px rgba(192, 132, 252, 0.4);
+      outline: none;
+    }
+
+    /* Invoice Printable Sheet Styling */
+    .invoice-sheet {
+      background: #ffffff;
+      color: #0f172a;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
     @media print {
-      body {
-        background: white !important;
-        padding: 0 !important;
-      }
-      .no-print {
-        display: none !important;
-      }
+      body { background: white !important; }
+      .no-print { display: none !important; }
       .print-area {
         box-shadow: none !important;
         border: none !important;
         width: 100% !important;
-        max-width: 100% !important;
-        padding: 0 !important;
         margin: 0 !important;
+        padding: 0 !important;
       }
     }
   </style>
 </head>
-<body class="bg-slate-200 font-sans p-3 md:p-8 min-h-screen text-slate-800">
+<body class="font-sans p-3 md:p-8 min-h-screen">
 
   <div class="max-w-5xl mx-auto space-y-8">
     
-    <div class="text-center no-print">
-      <h1 class="text-4xl font-extrabold text-blue-700 tracking-wide uppercase drop-shadow-md">RakaBill System</h1>
-      <p class="text-slate-600 font-medium text-sm mt-1">Smart Dynamic Billing & Invoice Generator</p>
+    <div class="text-center space-y-2 no-print">
+      <div class="inline-flex items-center justify-center p-3 bg-purple-900/50 rounded-full border border-purple-500/30 shadow-inner mb-2">
+        <i class="fa-solid fa-bolt text-amber-400 text-3xl animate-pulse"></i>
+      </div>
+      <h1 class="text-5xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-300 to-indigo-300 drop-shadow-lg">
+        RAKABILL
+      </h1>
+      <p class="text-purple-300 font-medium text-sm">Next-Gen Animated Billing & Invoice Management</p>
     </div>
 
-    <div class="glow-card rounded-3xl p-6 md:p-8 no-print">
-      <h2 class="text-2xl font-extrabold text-blue-600 mb-6 flex items-center gap-3 border-b pb-3">
-        <span class="text-3xl">🏪</span> 1. Business Profile Setup
-      </h2>
+    <div class="glow-3d-card rounded-3xl p-6 md:p-8 no-print">
+      <div class="flex items-center justify-between border-b border-purple-500/20 pb-4 mb-6">
+        <h2 class="text-2xl font-bold text-purple-300 flex items-center gap-3">
+          <i class="fa-solid fa-id-card text-purple-400"></i> Business Profile Setup
+        </h2>
+        <span class="text-xs bg-purple-900/80 text-purple-200 px-3 py-1 rounded-full border border-purple-500/30 font-semibold">
+          Step 1
+        </span>
+      </div>
       
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         <div>
-          <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Business Category *</label>
-          <select id="bizCategory" class="w-full p-3 input-3d rounded-xl outline-none font-semibold text-slate-700">
+          <label class="block text-xs font-bold uppercase tracking-wider text-purple-300 mb-2">
+            <i class="fa-solid fa-layer-group mr-1"></i> Business Category
+          </label>
+          <select id="bizCategory" class="w-full p-3 input-3d rounded-xl font-medium">
             <option value="Pharmacy">Pharmacy</option>
-            <option value="Hotel / Restaurant">Hotel / Restaurant</option>
-            <option value="General Store">General Store</option>
-            <option value="Government">Government Sector</option>
+            <option value="Hotel & Restaurant">Hotel & Restaurant</option>
+            <option value="General & Retail Store">General & Retail Store</option>
+            <option value="Government Sector">Government Sector</option>
+            <option value="Services & IT">Services & IT</option>
           </select>
         </div>
 
         <div>
-          <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Business Name *</label>
-          <input type="text" id="bizName" value="Shifa Pharmacy" placeholder="e.g. Shifa Pharmacy" class="w-full p-3 input-3d rounded-xl outline-none font-semibold text-slate-800">
+          <label class="block text-xs font-bold uppercase tracking-wider text-purple-300 mb-2">
+            <i class="fa-solid fa-store mr-1"></i> Business Name
+          </label>
+          <input type="text" id="bizName" placeholder="e.g. Shifa Pharmacy" class="w-full p-3 input-3d rounded-xl font-medium">
         </div>
 
         <div>
-          <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Country (Auto Currency) *</label>
-          <select id="bizCountry" onchange="updateCountryCurrency()" class="w-full p-3 input-3d rounded-xl outline-none font-semibold text-slate-700">
+          <label class="block text-xs font-bold uppercase tracking-wider text-purple-300 mb-2">
+            <i class="fa-solid fa-globe mr-1"></i> Country (Auto Currency)
+          </label>
+          <select id="bizCountry" onchange="updateCountryCurrency()" class="w-full p-3 input-3d rounded-xl font-medium">
             <option value="Pakistan">Pakistan (PKR)</option>
             <option value="UAE">UAE (AED)</option>
-            <option value="USA">USA (USD)</option>
-            <option value="UK">UK (GBP)</option>
+            <option value="USA">USA ($)</option>
+            <option value="UK">UK (£)</option>
             <option value="Saudi Arabia">Saudi Arabia (SAR)</option>
           </select>
         </div>
 
         <div>
-          <label class="block text-xs font-bold uppercase text-slate-500 mb-1">License Number *</label>
-          <input type="text" id="bizLicense" value="LIC-88392-PH" placeholder="e.g. PHARM-1234" class="w-full p-3 input-3d rounded-xl outline-none">
+          <label class="block text-xs font-bold uppercase tracking-wider text-purple-300 mb-2">
+            <i class="fa-solid fa-file-contract mr-1"></i> License Number
+          </label>
+          <input type="text" id="bizLicense" placeholder="e.g. LIC-99082" class="w-full p-3 input-3d rounded-xl font-medium">
         </div>
 
         <div>
-          <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Business Phone *</label>
-          <input type="text" id="bizPhone" value="+92 300 1234567" placeholder="e.g. +92 300 1234567" class="w-full p-3 input-3d rounded-xl outline-none">
+          <label class="block text-xs font-bold uppercase tracking-wider text-purple-300 mb-2">
+            <i class="fa-solid fa-phone mr-1"></i> Phone Number
+          </label>
+          <input type="text" id="bizPhone" placeholder="e.g. +92 300 1234567" class="w-full p-3 input-3d rounded-xl font-medium">
         </div>
 
         <div>
-          <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Upload Business Logo</label>
-          <input type="file" id="bizLogo" accept="image/*" onchange="previewLogo(event)" class="w-full p-2 border input-3d rounded-xl file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-blue-100 file:text-blue-700 file:font-semibold hover:file:bg-blue-200">
+          <label class="block text-xs font-bold uppercase tracking-wider text-purple-300 mb-2">
+            <i class="fa-solid fa-image mr-1"></i> Upload Logo
+          </label>
+          <input type="file" id="bizLogo" accept="image/*" onchange="previewLogo(event)" class="w-full p-2 border input-3d rounded-xl file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-purple-600 file:text-white file:font-bold hover:file:bg-purple-500 cursor-pointer">
         </div>
 
         <div class="md:col-span-2 lg:col-span-3">
-          <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Full Business Address *</label>
-          <input type="text" id="bizAddress" value="Shop #12, Main Bazaar, Peshawar, Pakistan" placeholder="Enter complete address" class="w-full p-3 input-3d rounded-xl outline-none">
+          <label class="block text-xs font-bold uppercase tracking-wider text-purple-300 mb-2">
+            <i class="fa-solid fa-location-dot mr-1"></i> Full Business Address
+          </label>
+          <input type="text" id="bizAddress" placeholder="Enter complete store/shop address" class="w-full p-3 input-3d rounded-xl font-medium">
         </div>
       </div>
     </div>
 
-    <div class="glow-card rounded-3xl p-6 md:p-8 no-print">
-      <h2 class="text-xl font-extrabold text-slate-700 mb-6 flex items-center gap-2 border-b pb-3">
-        <span>👤</span> 2. Customer & Invoice Info (3D Fields)
-      </h2>
+    <div class="glow-3d-card rounded-3xl p-6 md:p-8 no-print">
+      <div class="flex items-center justify-between border-b border-purple-500/20 pb-4 mb-6">
+        <h2 class="text-xl font-bold text-purple-300 flex items-center gap-3">
+          <i class="fa-solid fa-user-gear text-purple-400"></i> Customer & Invoice Details
+        </h2>
+        <span class="text-xs bg-purple-900/80 text-purple-200 px-3 py-1 rounded-full border border-purple-500/30 font-semibold">
+          Step 2
+        </span>
+      </div>
+
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div>
-          <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Customer Name</label>
-          <input type="text" id="custName" value="Ali Ahmed" placeholder="Enter customer name" class="w-full p-3.5 input-3d rounded-full outline-none px-5 font-semibold text-slate-800">
+          <label class="block text-xs font-bold uppercase tracking-wider text-purple-300 mb-2">Customer Name</label>
+          <input type="text" id="custName" placeholder="Enter customer name" class="w-full p-3.5 input-3d rounded-full px-5 font-medium">
         </div>
         <div>
-          <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Customer Phone</label>
-          <input type="text" id="custPhone" value="+92 312 9876543" placeholder="Enter phone number" class="w-full p-3.5 input-3d rounded-full outline-none px-5 font-semibold text-slate-800">
+          <label class="block text-xs font-bold uppercase tracking-wider text-purple-300 mb-2">Customer Phone</label>
+          <input type="text" id="custPhone" placeholder="Enter customer phone" class="w-full p-3.5 input-3d rounded-full px-5 font-medium">
         </div>
         <div>
-          <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Invoice Date (Auto-Generated)</label>
-          <input type="text" id="invDate" readonly class="w-full p-3.5 bg-slate-200 border border-slate-300 rounded-full outline-none px-5 text-slate-600 font-bold cursor-not-allowed">
+          <label class="block text-xs font-bold uppercase tracking-wider text-purple-300 mb-2">Invoice Date (Auto)</label>
+          <input type="text" id="invDate" readonly class="w-full p-3.5 bg-slate-900/90 border border-purple-500/20 rounded-full px-5 text-purple-300 font-bold cursor-not-allowed">
         </div>
       </div>
     </div>
 
-    <div class="glow-card rounded-3xl p-6 md:p-8 no-print">
-      <h2 class="text-xl font-extrabold text-slate-700 mb-4 flex items-center gap-2">
-        <span>🛒</span> 3. Add Line Items (Serial Entry)
-      </h2>
-      
+    <div class="glow-3d-card rounded-3xl p-6 md:p-8 no-print">
+      <div class="flex items-center justify-between border-b border-purple-500/20 pb-4 mb-6">
+        <h2 class="text-xl font-bold text-purple-300 flex items-center gap-3">
+          <i class="fa-solid fa-cart-flatbed text-purple-400"></i> Invoice Line Items
+        </h2>
+        <span class="text-xs bg-purple-900/80 text-purple-200 px-3 py-1 rounded-full border border-purple-500/30 font-semibold">
+          Step 3
+        </span>
+      </div>
+
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead>
-            <tr class="border-b-2 border-slate-300 text-slate-600 text-sm">
-              <th class="p-3">S.No</th>
-              <th class="p-3">Product Description</th>
+            <tr class="border-b border-purple-500/30 text-purple-300 text-xs font-bold uppercase tracking-wider">
+              <th class="p-3">S/N</th>
+              <th class="p-3">Product Name</th>
               <th class="p-3 w-28">Qty</th>
-              <th class="p-3 w-36">Unit Price (<span class="currencySymbol">PKR</span>)</th>
-              <th class="p-3 w-36">Amount</th>
+              <th class="p-3 w-36">Price (<span class="currencySymbol">PKR</span>)</th>
+              <th class="p-3 w-36">Total Amount</th>
               <th class="p-3 w-16 text-center">Action</th>
             </tr>
           </thead>
@@ -192,60 +259,65 @@
         </table>
       </div>
 
-      <button onclick="addItemRow()" class="mt-5 px-5 py-2.5 bg-blue-100 text-blue-700 font-bold rounded-2xl hover:bg-blue-200 transition flex items-center gap-2">
-        <span>➕</span> Add Another Product
+      <button onclick="addItemRow()" class="mt-6 px-6 py-3 bg-purple-600/30 hover:bg-purple-600/50 border border-purple-400/40 text-purple-200 font-bold rounded-2xl transition flex items-center gap-2 shadow-lg">
+        <i class="fa-solid fa-plus-circle text-lg"></i> Add New Product Item
       </button>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 pt-6 border-t">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 pt-6 border-t border-purple-500/20">
         <div>
-          <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Discount (<span class="currencySymbol">PKR</span>)</label>
-          <input type="number" id="discountInput" value="0" min="0" oninput="calculateTotals()" class="w-full p-3 input-3d rounded-xl outline-none font-semibold">
+          <label class="block text-xs font-bold uppercase tracking-wider text-purple-300 mb-2">
+            Discount Total (<span class="currencySymbol">PKR</span>)
+          </label>
+          <input type="number" id="discountInput" value="0" min="0" oninput="calculateTotals()" class="w-full p-3 input-3d rounded-xl font-medium">
         </div>
         <div>
-          <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Tax Percentage (%)</label>
-          <input type="number" id="taxInput" value="0" min="0" oninput="calculateTotals()" class="w-full p-3 input-3d rounded-xl outline-none font-semibold">
+          <label class="block text-xs font-bold uppercase tracking-wider text-purple-300 mb-2">
+            Tax Rate (%)
+          </label>
+          <input type="number" id="taxInput" value="0" min="0" oninput="calculateTotals()" class="w-full p-3 input-3d rounded-xl font-medium">
         </div>
       </div>
     </div>
 
-    <div id="invoicePreview" class="print-area glow-card rounded-3xl p-8 bg-white border border-slate-200 text-slate-800">
+    <div id="invoicePreview" class="print-area invoice-sheet rounded-3xl p-8 border border-slate-200">
       
       <div class="flex justify-between items-start border-b-2 border-slate-200 pb-6 mb-6">
         <div class="space-y-1">
-          <h1 id="dispBizName" class="text-3xl font-black text-blue-700 uppercase tracking-tight">Shifa Pharmacy</h1>
-          <p id="dispBizCat" class="text-xs font-bold bg-blue-100 text-blue-800 inline-block px-2.5 py-0.5 rounded-md">Pharmacy</p>
-          <p id="dispBizAddress" class="text-sm text-slate-600 font-medium mt-1">Shop #12, Main Bazaar, Peshawar, Pakistan</p>
-          <div class="text-sm text-slate-600 font-medium flex gap-4 pt-1">
-            <span>Phone: <strong id="dispBizPhone" class="text-slate-800">+92 300 1234567</strong></span>
-            <span>License #: <strong id="dispBizLic" class="text-slate-800">LIC-88392-PH</strong></span>
+          <h1 id="dispBizName" class="text-3xl font-black text-purple-900 uppercase tracking-tight">YOUR BUSINESS NAME</h1>
+          <p id="dispBizCat" class="text-xs font-bold bg-purple-100 text-purple-800 inline-block px-2.5 py-0.5 rounded-md">Category</p>
+          <p id="dispBizAddress" class="text-sm text-slate-600 font-medium mt-1">Business Address will show here</p>
+          <div class="text-sm text-slate-600 font-medium flex flex-wrap gap-4 pt-1">
+            <span>Phone: <strong id="dispBizPhone" class="text-slate-900">-</strong></span>
+            <span>License #: <strong id="dispBizLic" class="text-slate-900">-</strong></span>
           </div>
         </div>
         <div class="text-right flex flex-col items-end">
-          <img id="dispLogo" src="https://via.placeholder.com/90?text=LOGO" alt="Business Logo" class="h-20 w-20 object-contain rounded-xl border p-1 mb-2 bg-slate-50">
-          <span class="text-xs font-black bg-slate-800 text-white px-3 py-1 rounded-full tracking-widest uppercase">OFFICIAL INVOICE</span>
+          <img id="dispLogo" src="https://via.placeholder.com/90?text=LOGO" alt="Logo" class="h-20 w-20 object-contain rounded-xl border p-1 mb-2 bg-slate-50">
+          <span class="text-xs font-black bg-purple-950 text-white px-3 py-1 rounded-full tracking-widest uppercase">INVOICE</span>
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-4 mb-6 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+      <div class="grid grid-cols-2 gap-4 mb-6 bg-purple-50/50 p-4 rounded-2xl border border-purple-100">
         <div>
-          <p class="text-xs text-slate-400 uppercase font-black tracking-wider">Customer Details</p>
-          <p id="dispCustName" class="text-lg font-bold text-slate-800">Ali Ahmed</p>
-          <p id="dispCustPhone" class="text-sm text-slate-600 font-medium">+92 312 9876543</p>
+          <p class="text-xs text-purple-900 uppercase font-black tracking-wider">Customer Details</p>
+          <p id="dispCustName" class="text-lg font-bold text-slate-800">Customer Name</p>
+          <p id="dispCustPhone" class="text-sm text-slate-600 font-medium">-</p>
         </div>
         <div class="text-right">
-          <p class="text-xs text-slate-400 uppercase font-black tracking-wider">Invoice Date</p>
-          <p id="dispInvDate" class="text-lg font-bold text-slate-800">-</p>
+          <p class="text-xs text-purple-900 uppercase font-black tracking-wider">Invoice Info</p>
+          <p class="text-sm text-slate-700 font-bold">Invoice #: <span id="dispInvNumber" class="text-purple-700">-</span></p>
+          <p class="text-sm text-slate-700 font-bold">Date: <span id="dispInvDate" class="text-slate-900">-</span></p>
         </div>
       </div>
 
       <table class="w-full mb-6 border-collapse">
         <thead>
-          <tr class="bg-slate-100 text-slate-700 text-xs font-black uppercase tracking-wider border-y border-slate-200">
-            <th class="p-3 text-left">S.No</th>
+          <tr class="bg-purple-900 text-white text-xs font-black uppercase tracking-wider">
+            <th class="p-3 text-left rounded-l-lg">S.No</th>
             <th class="p-3 text-left">Product Name / Description</th>
             <th class="p-3 text-center">Qty</th>
             <th class="p-3 text-right">Price</th>
-            <th class="p-3 text-right">Amount</th>
+            <th class="p-3 text-right rounded-r-lg">Amount</th>
           </tr>
         </thead>
         <tbody id="invoiceTableBody" class="divide-y divide-slate-100 text-sm font-medium text-slate-700">
@@ -256,11 +328,11 @@
         <div class="w-full md:w-1/2 space-y-2 text-sm">
           <div class="flex justify-between text-slate-600">
             <span>Total Items Quantity:</span>
-            <span id="dispTotalQty" class="font-bold text-slate-800">0</span>
+            <span id="dispTotalQty" class="font-bold text-slate-900">0</span>
           </div>
           <div class="flex justify-between text-slate-600">
-            <span>Subtotal:</span>
-            <span class="font-bold text-slate-800"><span class="currencySymbol">PKR</span> <span id="dispSubTotal">0.00</span></span>
+            <span>Subtotal Amount:</span>
+            <span class="font-bold text-slate-900"><span class="currencySymbol">PKR</span> <span id="dispSubTotal">0.00</span></span>
           </div>
           <div class="flex justify-between text-red-500">
             <span>Discount Applied:</span>
@@ -268,9 +340,9 @@
           </div>
           <div class="flex justify-between text-slate-600">
             <span>Tax Amount:</span>
-            <span class="font-bold text-slate-800">+ <span class="currencySymbol">PKR</span> <span id="dispTax">0.00</span></span>
+            <span class="font-bold text-slate-900">+ <span class="currencySymbol">PKR</span> <span id="dispTax">0.00</span></span>
           </div>
-          <div class="flex justify-between font-black text-xl text-blue-700 border-t-2 border-blue-100 pt-3 mt-2">
+          <div class="flex justify-between font-black text-xl text-purple-900 border-t-2 border-purple-200 pt-3 mt-2">
             <span>Grand Total:</span>
             <span><span class="currencySymbol">PKR</span> <span id="dispGrandTotal">0.00</span></span>
           </div>
@@ -280,16 +352,16 @@
     </div>
 
     <div class="flex flex-wrap justify-center gap-6 py-6 no-print">
-      <button onclick="downloadPDF()" class="btn-3d-blue text-white font-black py-4 px-10 rounded-2xl flex items-center gap-3 text-lg tracking-wide uppercase">
-        <span class="text-2xl">📥</span> Download PDF
+      <button onclick="downloadPDF()" class="btn-3d btn-3d-purple text-white font-black py-4 px-9 rounded-2xl flex items-center gap-3 text-lg tracking-wide uppercase">
+        <i class="fa-solid fa-file-pdf text-xl"></i> Download PDF
       </button>
 
-      <button onclick="printInvoice()" class="btn-3d-green text-white font-black py-4 px-10 rounded-2xl flex items-center gap-3 text-lg tracking-wide uppercase">
-        <span class="text-2xl">🖨️</span> Print Invoice
+      <button onclick="printInvoice()" class="btn-3d btn-3d-emerald text-white font-black py-4 px-9 rounded-2xl flex items-center gap-3 text-lg tracking-wide uppercase">
+        <i class="fa-solid fa-print text-xl"></i> Print Invoice
       </button>
 
-      <button onclick="shareInvoice()" class="btn-3d-amber text-white font-black py-4 px-10 rounded-2xl flex items-center gap-3 text-lg tracking-wide uppercase">
-        <span class="text-2xl">📲</span> Share Bill
+      <button onclick="shareInvoice()" class="btn-3d btn-3d-amber text-white font-black py-4 px-9 rounded-2xl flex items-center gap-3 text-lg tracking-wide uppercase">
+        <i class="fa-solid fa-share-nodes text-xl"></i> Share Bill
       </button>
     </div>
 
@@ -298,46 +370,40 @@
   <script>
     let globalCurrency = 'PKR';
 
-    // Auto-Initialization
     window.onload = function() {
-      // Set current date automatically
+      // Auto set today's date
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('invDate').value = today;
       document.getElementById('dispInvDate').innerText = today;
 
-      // Populate default dynamic demo data (Pharmacy example as requested)
-      addItemRow('Paracetamol Tablets', 1, 50);
-      addItemRow('Cough Syrup 120ml', 2, 50);
+      // Auto Generate Dynamic Invoice Number
+      const randomInvNum = 'RB-' + Math.floor(100000 + Math.random() * 900000);
+      document.getElementById('dispInvNumber').innerText = randomInvNum;
 
-      // Attach dynamic listeners to inputs for instant live updates
-      const profileInputIds = ['bizName', 'bizCategory', 'bizAddress', 'bizPhone', 'bizLicense', 'custName', 'custPhone'];
-      profileInputIds.forEach(id => {
+      // Live update listeners for input fields
+      const inputIDs = ['bizName', 'bizCategory', 'bizAddress', 'bizPhone', 'bizLicense', 'custName', 'custPhone'];
+      inputIDs.forEach(id => {
         document.getElementById(id).addEventListener('input', updateInvoiceHeader);
       });
 
       calculateTotals();
     };
 
-    // Update Currency based on Country selection
     function updateCountryCurrency() {
       const country = document.getElementById('bizCountry').value;
       const currencyMap = {
         'Pakistan': 'PKR',
         'UAE': 'AED',
-        'USA': 'USD',
-        'UK': 'GBP',
+        'USA': '$',
+        'UK': '£',
         'Saudi Arabia': 'SAR'
       };
 
       globalCurrency = currencyMap[country] || 'PKR';
-      
-      const currencyElements = document.querySelectorAll('.currencySymbol');
-      currencyElements.forEach(el => el.innerText = globalCurrency);
-
+      document.querySelectorAll('.currencySymbol').forEach(el => el.innerText = globalCurrency);
       calculateTotals();
     }
 
-    // Preview Uploaded Business Logo
     function previewLogo(event) {
       const reader = new FileReader();
       reader.onload = function() {
@@ -348,11 +414,10 @@
       }
     }
 
-    // Live update profile data onto invoice layout
     function updateInvoiceHeader() {
-      document.getElementById('dispBizName').innerText = document.getElementById('bizName').value || 'Business Name';
+      document.getElementById('dispBizName').innerText = document.getElementById('bizName').value || 'YOUR BUSINESS NAME';
       document.getElementById('dispBizCat').innerText = document.getElementById('bizCategory').value;
-      document.getElementById('dispBizAddress').innerText = document.getElementById('bizAddress').value || 'Business Address';
+      document.getElementById('dispBizAddress').innerText = document.getElementById('bizAddress').value || 'Business Address will show here';
       document.getElementById('dispBizPhone').innerText = document.getElementById('bizPhone').value || '-';
       document.getElementById('dispBizLic').innerText = document.getElementById('bizLicense').value || '-';
 
@@ -360,33 +425,30 @@
       document.getElementById('dispCustPhone').innerText = document.getElementById('custPhone').value || '-';
     }
 
-    // Add Item Row to Entry Form
     function addItemRow(name = '', qty = 1, price = 0) {
       const tbody = document.getElementById('itemsTableBody');
       const rowCount = tbody.rows.length + 1;
 
       const tr = document.createElement('tr');
-      tr.className = "border-b border-slate-200";
+      tr.className = "border-b border-purple-500/20";
       tr.innerHTML = `
-        <td class="p-3 font-bold text-slate-500 row-index">${rowCount}</td>
-        <td class="p-3"><input type="text" value="${name}" placeholder="e.g. Item Name" class="item-name w-full p-2.5 input-3d rounded-xl outline-none font-semibold text-slate-800" oninput="calculateTotals()"></td>
-        <td class="p-3"><input type="number" value="${qty}" min="1" class="item-qty w-full p-2.5 input-3d rounded-xl outline-none font-semibold text-center text-slate-800" oninput="calculateTotals()"></td>
-        <td class="p-3"><input type="number" value="${price}" min="0" class="item-price w-full p-2.5 input-3d rounded-xl outline-none font-semibold text-right text-slate-800" oninput="calculateTotals()"></td>
-        <td class="p-3 font-extrabold text-slate-700 text-right item-amount">0.00</td>
-        <td class="p-3 text-center"><button onclick="removeItemRow(this)" class="bg-red-100 text-red-600 hover:bg-red-200 font-black h-9 w-9 rounded-full transition">✕</button></td>
+        <td class="p-3 font-bold text-purple-300 row-index">${rowCount}</td>
+        <td class="p-3"><input type="text" value="${name}" placeholder="Enter product name" class="item-name w-full p-2.5 input-3d rounded-xl font-medium" oninput="calculateTotals()"></td>
+        <td class="p-3"><input type="number" value="${qty}" min="1" class="item-qty w-full p-2.5 input-3d rounded-xl font-medium text-center" oninput="calculateTotals()"></td>
+        <td class="p-3"><input type="number" value="${price}" min="0" class="item-price w-full p-2.5 input-3d rounded-xl font-medium text-right" oninput="calculateTotals()"></td>
+        <td class="p-3 font-extrabold text-purple-200 text-right item-amount">0.00</td>
+        <td class="p-3 text-center"><button onclick="removeItemRow(this)" class="bg-red-500/20 text-red-400 hover:bg-red-500/40 border border-red-500/30 font-bold h-9 w-9 rounded-full transition">✕</button></td>
       `;
       tbody.appendChild(tr);
       calculateTotals();
     }
 
-    // Remove Item Row
     function removeItemRow(btn) {
       btn.closest('tr').remove();
       reindexTable();
       calculateTotals();
     }
 
-    // Re-index row numbers
     function reindexTable() {
       const rows = document.querySelectorAll('#itemsTableBody tr');
       rows.forEach((row, idx) => {
@@ -394,7 +456,6 @@
       });
     }
 
-    // Calculate All Mathematical Totals
     function calculateTotals() {
       updateInvoiceHeader();
       
@@ -406,7 +467,7 @@
       let subTotal = 0;
 
       inputRows.forEach((row, index) => {
-        const name = row.querySelector('.item-name').value || 'Item';
+        const name = row.querySelector('.item-name').value || 'Item Name';
         const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
         const price = parseFloat(row.querySelector('.item-price').value) || 0;
         const amount = qty * price;
@@ -416,7 +477,6 @@
         totalQty += qty;
         subTotal += amount;
 
-        // Render line into Printable Invoice preview
         const prevTr = document.createElement('tr');
         prevTr.className = "border-b border-slate-100";
         prevTr.innerHTML = `
@@ -432,9 +492,9 @@
       const discount = parseFloat(document.getElementById('discountInput').value) || 0;
       const taxPercent = parseFloat(document.getElementById('taxInput').value) || 0;
 
-      const taxableBase = Math.max(0, subTotal - discount);
-      const taxAmount = (taxableBase * taxPercent) / 100;
-      const grandTotal = taxableBase + taxAmount;
+      const taxableAmount = Math.max(0, subTotal - discount);
+      const taxAmount = (taxableAmount * taxPercent) / 100;
+      const grandTotal = taxableAmount + taxAmount;
 
       document.getElementById('dispTotalQty').innerText = totalQty;
       document.getElementById('dispSubTotal').innerText = subTotal.toFixed(2);
@@ -443,7 +503,6 @@
       document.getElementById('dispGrandTotal').innerText = grandTotal.toFixed(2);
     }
 
-    // PDF Download Logic
     function downloadPDF() {
       const element = document.getElementById('invoicePreview');
       const opt = {
@@ -456,22 +515,20 @@
       html2pdf().set(opt).from(element).save();
     }
 
-    // Print Logic
     function printInvoice() {
       window.print();
     }
 
-    // Web Sharing API Logic
     function shareInvoice() {
-      const totalAmount = document.getElementById('dispGrandTotal').innerText;
+      const grandTotal = document.getElementById('dispGrandTotal').innerText;
       if (navigator.share) {
         navigator.share({
-          title: 'RakaBill Official Invoice',
-          text: `Invoice Summary from ${document.getElementById('dispBizName').innerText}\nTotal Amount Due: ${globalCurrency} ${totalAmount}`,
+          title: 'RakaBill Invoice',
+          text: `Invoice Total: ${globalCurrency} ${grandTotal}`,
           url: window.location.href,
         }).catch(() => {});
       } else {
-        alert(`Sharing is not directly supported on this browser. Your invoice Grand Total is ${globalCurrency} ${totalAmount}. Please download the PDF to send via messaging apps.`);
+        alert(`Your total bill amount is ${globalCurrency} ${grandTotal}. Download PDF to share manually.`);
       }
     }
   </script>
