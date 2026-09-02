@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ur" dir="ltr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,88 +28,88 @@
     
     <div class="glow-card rounded-2xl p-6 md:p-8">
       <h2 class="text-2xl font-bold text-blue-600 mb-6 flex items-center gap-2">
-        <span>🏪</span> بزنس پروفائل سیٹ اپ (RakaBill)
+        <span>🏪</span> Business Profile Setup (RakaBill)
       </h2>
       
       <form id="profileForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-semibold mb-1">بزنس کا زمرہ (Category)</label>
+          <label class="block text-sm font-semibold mb-1">Business Category</label>
           <select id="bizCategory" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
-            <option value="فارمیسی (Pharmacy)">فارمیسی (Pharmacy)</option>
-            <option value="ہوٹل / ریسٹورنٹ">ہوٹل / ریسٹورنٹ</option>
-            <option value="جنرل اسٹور">جنرل اسٹور</option>
-            <option value="سرکاری / گورنمنٹ">سرکاری / گورنمنٹ</option>
+            <option value="Pharmacy">Pharmacy</option>
+            <option value="Hotel / Restaurant">Hotel / Restaurant</option>
+            <option value="General Store">General Store</option>
+            <option value="Government">Government</option>
           </select>
         </div>
 
         <div>
-          <label class="block text-sm font-semibold mb-1">بزنس کا نام (Business Name)</label>
-          <input type="text" id="bizName" value="شفاء فارمیسی" placeholder="مثلاً: شفاء فارمیسی" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" required>
+          <label class="block text-sm font-semibold mb-1">Business Name</label>
+          <input type="text" id="bizName" value="Shifa Pharmacy" placeholder="e.g. Shifa Pharmacy" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" required>
         </div>
 
         <div>
-          <label class="block text-sm font-semibold mb-1">ملک (Country)</label>
+          <label class="block text-sm font-semibold mb-1">Country</label>
           <select id="bizCountry" onchange="updateCurrency()" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
-            <option value="Pakistan">پاکستان (Pakistan)</option>
-            <option value="UAE">یو اے ای (UAE)</option>
-            <option value="USA">امریکہ (USA)</option>
-            <option value="UK">برطانیہ (UK)</option>
+            <option value="Pakistan">Pakistan (PKR)</option>
+            <option value="UAE">UAE (AED)</option>
+            <option value="USA">USA (USD)</option>
+            <option value="UK">UK (GBP)</option>
           </select>
         </div>
 
         <div>
-          <label class="block text-sm font-semibold mb-1">لائسنس نمبر (License No)</label>
-          <input type="text" id="bizLicense" value="LIC-998823" placeholder="مثلاً: PHARM-1234" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+          <label class="block text-sm font-semibold mb-1">License Number</label>
+          <input type="text" id="bizLicense" value="LIC-998823" placeholder="e.g. PHARM-1234" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
         </div>
 
         <div>
-          <label class="block text-sm font-semibold mb-1">فون نمبر (Phone Number)</label>
-          <input type="text" id="bizPhone" value="+92 300 1234567" placeholder="مثلاً: +92 300 1234567" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+          <label class="block text-sm font-semibold mb-1">Phone Number</label>
+          <input type="text" id="bizPhone" value="+92 300 1234567" placeholder="e.g. +92 300 1234567" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
         </div>
 
         <div>
-          <label class="block text-sm font-semibold mb-1">لوگو اپلوڈ کریں (Logo)</label>
+          <label class="block text-sm font-semibold mb-1">Upload Logo</label>
           <input type="file" id="bizLogo" accept="image/*" onchange="previewLogo(event)" class="w-full p-2 border rounded-xl file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
         </div>
 
         <div class="md:col-span-2">
-          <label class="block text-sm font-semibold mb-1">پتا (Address)</label>
-          <input type="text" id="bizAddress" value="مین بازار، پشاور، پاکستان" placeholder="مکمل پتہ لکھیں" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+          <label class="block text-sm font-semibold mb-1">Address</label>
+          <input type="text" id="bizAddress" value="Main Bazaar, Peshawar, Pakistan" placeholder="Enter full address" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
         </div>
       </form>
     </div>
 
     <div class="glow-card rounded-2xl p-6 md:p-8">
-      <h2 class="text-xl font-bold text-slate-700 mb-4">👤 کسٹمر اور انوائس کی تفصیلات</h2>
+      <h2 class="text-xl font-bold text-slate-700 mb-4">👤 Customer & Invoice Details</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label class="block text-sm font-semibold mb-1">کسٹمر کا نام</label>
-          <input type="text" id="custName" value="علی احمد" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+          <label class="block text-sm font-semibold mb-1">Customer Name</label>
+          <input type="text" id="custName" value="Ali Ahmed" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
         </div>
         <div>
-          <label class="block text-sm font-semibold mb-1">کسٹمر فون نمبر</label>
+          <label class="block text-sm font-semibold mb-1">Customer Phone Number</label>
           <input type="text" id="custPhone" value="+92 312 9876543" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
         </div>
         <div>
-          <label class="block text-sm font-semibold mb-1">انوائس تاریخ (آٹو)</label>
+          <label class="block text-sm font-semibold mb-1">Invoice Date (Auto)</label>
           <input type="text" id="invDate" readonly class="w-full p-2.5 bg-slate-100 border rounded-xl text-slate-500 outline-none font-semibold">
         </div>
       </div>
     </div>
 
     <div class="glow-card rounded-2xl p-6 md:p-8">
-      <h2 class="text-xl font-bold text-slate-700 mb-4">🛍️ پروڈکٹس شامل کریں</h2>
+      <h2 class="text-xl font-bold text-slate-700 mb-4">🛍️ Add Products</h2>
       
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="border-b">
-              <th class="p-2">نمبر</th>
-              <th class="p-2">آئٹم کا نام</th>
-              <th class="p-2">تعداد (Qty)</th>
-              <th class="p-2">قیمت (<span class="currencySymbol">PKR</span>)</th>
-              <th class="p-2">کل رقم</th>
-              <th class="p-2">ایکشن</th>
+              <th class="p-2">S/N</th>
+              <th class="p-2">Item Name</th>
+              <th class="p-2">Qty</th>
+              <th class="p-2">Price (<span class="currencySymbol">PKR</span>)</th>
+              <th class="p-2">Total Amount</th>
+              <th class="p-2">Action</th>
             </tr>
           </thead>
           <tbody id="itemsTableBody">
@@ -118,16 +118,16 @@
       </div>
 
       <button onclick="addItemRow()" class="mt-4 px-4 py-2 bg-blue-50 text-blue-600 font-semibold rounded-xl hover:bg-blue-100 transition">
-        + نیا آئٹم شامل کریں
+        + Add New Item
       </button>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 pt-4 border-t">
         <div>
-          <label class="block text-sm font-semibold mb-1">ڈسکاؤنٹ (<span class="currencySymbol">PKR</span>)</label>
+          <label class="block text-sm font-semibold mb-1">Discount (<span class="currencySymbol">PKR</span>)</label>
           <input type="number" id="discountInput" value="0" min="0" oninput="calculateTotals()" class="w-full p-2.5 border rounded-xl outline-none">
         </div>
         <div>
-          <label class="block text-sm font-semibold mb-1">ٹیکس (%)</label>
+          <label class="block text-sm font-semibold mb-1">Tax (%)</label>
           <input type="number" id="taxInput" value="0" min="0" oninput="calculateTotals()" class="w-full p-2.5 border rounded-xl outline-none">
         </div>
       </div>
@@ -136,25 +136,25 @@
     <div id="invoicePreview" class="glow-card rounded-2xl p-8 bg-white border">
       <div class="flex justify-between items-start border-b pb-6 mb-6">
         <div>
-          <h1 id="dispBizName" class="text-3xl font-extrabold text-blue-700">شفاء فارمیسی</h1>
-          <p id="dispBizCat" class="text-sm text-slate-500 font-semibold">فارمیسی (Pharmacy)</p>
-          <p id="dispBizAddress" class="text-sm text-slate-600 mt-1">مین بازار، پشاور، پاکستان</p>
-          <p class="text-sm text-slate-600">فون: <span id="dispBizPhone">+92 300 1234567</span> | لائسنس: <span id="dispBizLic">LIC-998823</span></p>
+          <h1 id="dispBizName" class="text-3xl font-extrabold text-blue-700">Shifa Pharmacy</h1>
+          <p id="dispBizCat" class="text-sm text-slate-500 font-semibold">Pharmacy</p>
+          <p id="dispBizAddress" class="text-sm text-slate-600 mt-1">Main Bazaar, Peshawar, Pakistan</p>
+          <p class="text-sm text-slate-600">Phone: <span id="dispBizPhone">+92 300 1234567</span> | License: <span id="dispBizLic">LIC-998823</span></p>
         </div>
         <div class="text-right">
           <img id="dispLogo" src="https://via.placeholder.com/80?text=LOGO" alt="Logo" class="h-20 w-20 object-contain rounded-lg ml-auto mb-2">
-          <span class="inline-block bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase">انوائس</span>
+          <span class="inline-block bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase">INVOICE</span>
         </div>
       </div>
 
       <div class="grid grid-cols-2 gap-4 mb-6 bg-slate-50 p-4 rounded-xl border">
         <div>
-          <p class="text-xs text-slate-500 uppercase font-bold">گاہک کی تفصیلات</p>
-          <p id="dispCustName" class="font-bold text-slate-800">علی احمد</p>
+          <p class="text-xs text-slate-500 uppercase font-bold">Customer Details</p>
+          <p id="dispCustName" class="font-bold text-slate-800">Ali Ahmed</p>
           <p id="dispCustPhone" class="text-sm text-slate-600">+92 312 9876543</p>
         </div>
         <div class="text-right">
-          <p class="text-xs text-slate-500 uppercase font-bold">انوائس کی تاریخ</p>
+          <p class="text-xs text-slate-500 uppercase font-bold">Invoice Date</p>
           <p id="dispInvDate" class="font-bold text-slate-800">-</p>
         </div>
       </div>
@@ -163,10 +163,10 @@
         <thead>
           <tr class="bg-slate-100 text-slate-700 text-sm">
             <th class="p-3 text-left">#</th>
-            <th class="p-3 text-left">تفصیل (Product)</th>
-            <th class="p-3 text-center">تعداد (Qty)</th>
-            <th class="p-3 text-right">قیمت</th>
-            <th class="p-3 text-right">کل رقم</th>
+            <th class="p-3 text-left">Description</th>
+            <th class="p-3 text-center">Qty</th>
+            <th class="p-3 text-right">Price</th>
+            <th class="p-3 text-right">Total</th>
           </tr>
         </thead>
         <tbody id="invoiceTableBody" class="divide-y text-sm text-slate-700">
@@ -176,23 +176,23 @@
       <div class="flex justify-end">
         <div class="w-full md:w-1/2 space-y-2 text-sm border-t pt-4">
           <div class="flex justify-between">
-            <span class="text-slate-600">کل تعداد (Total Qty):</span>
+            <span class="text-slate-600">Total Quantity:</span>
             <span id="dispTotalQty" class="font-bold">0</span>
           </div>
           <div class="flex justify-between">
-            <span class="text-slate-600">سب ٹوٹل:</span>
+            <span class="text-slate-600">Subtotal:</span>
             <span><span class="currencySymbol">PKR</span> <span id="dispSubTotal">0.00</span></span>
           </div>
           <div class="flex justify-between text-red-500">
-            <span>ڈسکاؤنٹ:</span>
+            <span>Discount:</span>
             <span>- <span class="currencySymbol">PKR</span> <span id="dispDiscount">0.00</span></span>
           </div>
           <div class="flex justify-between text-slate-600">
-            <span>ٹیکس:</span>
+            <span>Tax:</span>
             <span>+ <span class="currencySymbol">PKR</span> <span id="dispTax">0.00</span></span>
           </div>
           <div class="flex justify-between font-bold text-lg text-blue-700 border-t pt-2">
-            <span>کل قابلِ ادائیگی:</span>
+            <span>Grand Total:</span>
             <span><span class="currencySymbol">PKR</span> <span id="dispGrandTotal">0.00</span></span>
           </div>
         </div>
@@ -201,15 +201,15 @@
 
     <div class="flex flex-wrap justify-center gap-4 py-6">
       <button onclick="downloadPDF()" class="btn-3d bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 px-8 rounded-2xl flex items-center gap-2 shadow-lg">
-        <span>📥</span> ڈاون لوڈ (PDF)
+        <span>📥</span> Download (PDF)
       </button>
 
       <button onclick="printInvoice()" class="btn-3d bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold py-3 px-8 rounded-2xl flex items-center gap-2 shadow-lg">
-        <span>🖨️</span> پرنٹ (Print)
+        <span>🖨️</span> Print
       </button>
 
       <button onclick="shareInvoice()" class="btn-3d bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold py-3 px-8 rounded-2xl flex items-center gap-2 shadow-lg">
-        <span>📲</span> شیئر کریں (Share)
+        <span>📲</span> Share
       </button>
     </div>
 
@@ -225,10 +225,10 @@
       document.getElementById('dispInvDate').innerText = today;
 
       // Add Initial Demo Rows
-      addItemRow('پراسیٹامول (Paracetamol)', 1, 50);
-      addItemRow('کف سیرپ (Cough Syrup)', 2, 50);
+      addItemRow('Paracetamol', 1, 50);
+      addItemRow('Cough Syrup', 2, 50);
 
-      // Add Realtime Event Listeners to Profile Inputs
+      // Add Realtime Event Listeners
       ['bizName', 'bizCategory', 'bizAddress', 'bizPhone', 'bizLicense', 'custName', 'custPhone'].forEach(id => {
         document.getElementById(id).addEventListener('input', updateInvoiceHeader);
       });
@@ -252,13 +252,13 @@
     }
 
     function updateInvoiceHeader() {
-      document.getElementById('dispBizName').innerText = document.getElementById('bizName').value || 'بزنس کا نام';
+      document.getElementById('dispBizName').innerText = document.getElementById('bizName').value || 'Business Name';
       document.getElementById('dispBizCat').innerText = document.getElementById('bizCategory').value;
       document.getElementById('dispBizAddress').innerText = document.getElementById('bizAddress').value;
       document.getElementById('dispBizPhone').innerText = document.getElementById('bizPhone').value;
       document.getElementById('dispBizLic').innerText = document.getElementById('bizLicense').value;
 
-      document.getElementById('dispCustName').innerText = document.getElementById('custName').value || 'کسٹمر کا نام';
+      document.getElementById('dispCustName').innerText = document.getElementById('custName').value || 'Customer Name';
       document.getElementById('dispCustPhone').innerText = document.getElementById('custPhone').value;
     }
 
@@ -270,7 +270,7 @@
       tr.className = "border-b";
       tr.innerHTML = `
         <td class="p-2 font-bold row-index">${rowCount}</td>
-        <td class="p-2"><input type="text" value="${name}" placeholder="آئٹم کا نام" class="item-name w-full p-2 border rounded-lg outline-none" oninput="calculateTotals()"></td>
+        <td class="p-2"><input type="text" value="${name}" placeholder="Item Name" class="item-name w-full p-2 border rounded-lg outline-none" oninput="calculateTotals()"></td>
         <td class="p-2"><input type="number" value="${qty}" min="1" class="item-qty w-20 p-2 border rounded-lg outline-none" oninput="calculateTotals()"></td>
         <td class="p-2"><input type="number" value="${price}" min="0" class="item-price w-24 p-2 border rounded-lg outline-none" oninput="calculateTotals()"></td>
         <td class="p-2 font-bold item-amount">0.00</td>
@@ -314,7 +314,6 @@
         totalQty += qty;
         subTotal += amount;
 
-        // Populate Preview Table
         const prevTr = document.createElement('tr');
         prevTr.innerHTML = `
           <td class="p-3">${index + 1}</td>
@@ -339,7 +338,6 @@
       document.getElementById('dispGrandTotal').innerText = grandTotal.toFixed(2);
     }
 
-    // PDF Download Function
     function downloadPDF() {
       const element = document.getElementById('invoicePreview');
       const opt = {
@@ -352,7 +350,6 @@
       html2pdf().set(opt).from(element).save();
     }
 
-    // Print Function
     function printInvoice() {
       const printContents = document.getElementById('invoicePreview').innerHTML;
       const originalContents = document.body.innerHTML;
@@ -363,7 +360,6 @@
       location.reload(); 
     }
 
-    // Share Function
     function shareInvoice() {
       if (navigator.share) {
         navigator.share({
@@ -372,7 +368,7 @@
           url: window.location.href,
         }).catch(console.error);
       } else {
-        alert("شیئرنگ کا فیچر آپ کے براؤزر میں فی الحال دستیاب نہیں ہے۔ آپ پی ڈی ایف ڈاؤن لوڈ کر کے شیئر کر سکتے ہیں۔");
+        alert("Sharing feature is not supported in this browser. Please download the PDF to share.");
       }
     }
   </script>
