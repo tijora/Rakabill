@@ -1,476 +1,338 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RakaBill - Premium Pharmacy Billing System</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
-  
-  <style>
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background: #090d16;
-      background-image: 
-        radial-gradient(at 0% 0%, rgba(147, 51, 234, 0.15) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.15) 0px, transparent 50%);
-      color: #f1f5f9;
-      min-height: 100vh;
-    }
-
-    .brand-logo {
-      font-family: 'Orbitron', sans-serif;
-      background: linear-gradient(135deg, #a855f7 0%, #3b82f6 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 0 15px rgba(168, 85, 247, 0.4));
-    }
-
-    .glow-card {
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    }
-
-    .input-3d {
-      background: rgba(2, 6, 23, 0.8);
-      border: 1px solid rgba(147, 51, 234, 0.2);
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .input-3d:focus {
-      border-color: #a855f7;
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4), 0 0 15px rgba(168, 85, 247, 0.3);
-      outline: none;
-    }
-
-    .btn-circle {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.4);
-    }
-    .btn-circle:hover {
-      transform: translateY(-3px) scale(1.05);
-    }
-
-    .invoice-sheet {
-      background: #ffffff;
-      color: #0f172a;
-      border-radius: 20px;
-    }
-
-    @media print {
-      .no-print { display: none !important; }
-      body { background: white !important; color: black !important; }
-      .print-area { box-shadow: none !important; border: none !important; width: 100% !important; margin: 0 !important; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RakaBill - Pharmacy Billing System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0b0f19; color: #f3f4f6; }
+        .bg-card { background: rgba(17, 24, 39, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .input-style { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; }
+        .input-style:focus { border-color: #a855f7; outline: none; }
+    </style>
 </head>
-<body class="p-3 md:p-8">
+<body class="p-4 md:p-8 max-w-4xl mx-auto">
 
-  <header class="max-w-6xl mx-auto flex justify-between items-center mb-8 no-print">
-    <div>
-      <h1 class="brand-logo text-3xl md:text-4xl font-black tracking-wider">RakaBill</h1>
-      <p class="text-xs text-slate-400 font-semibold tracking-widest uppercase">Pharmacy OS v3.0</p>
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">RakaBill</h1>
+        </div>
+        <button id="profileBtn" onclick="toggleProfileModal()" class="w-10 h-10 rounded-full bg-purple-600/30 border border-purple-500/50 flex items-center justify-center text-purple-300 hover:bg-purple-600 hover:text-white transition">
+            <i class="fa-solid fa-user"></i>
+        </button>
     </div>
 
-    <button onclick="toggleProfileModal()" class="btn-circle bg-purple-600/30 border border-purple-500/40 text-purple-300 hover:bg-purple-600/50">
-      <i class="fa-solid fa-user-gear text-xl"></i>
-    </button>
-  </header>
+    <!-- Search & History -->
+    <div class="bg-card p-4 rounded-xl mb-6 flex flex-col gap-3">
+        <div class="relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-gray-400"></i>
+            <input type="text" id="searchInput" onkeyup="searchInvoice()" placeholder="Search Invoice # or Patient Name..." class="w-full pl-10 pr-4 py-2 rounded-lg input-style">
+        </div>
+    </div>
 
-  <main class="max-w-6xl mx-auto space-y-8">
-    
-    <section class="glow-card rounded-2xl p-4 no-print flex flex-col md:flex-row gap-4 justify-between items-center">
-      <div class="relative w-full md:w-96">
-        <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400"></i>
-        <input type="text" id="searchInput" oninput="searchInvoices()" placeholder="Search Invoice # or Patient Name..." class="w-full pl-11 pr-4 py-2.5 input-3d rounded-xl text-sm font-semibold">
-      </div>
-      <div class="text-xs text-purple-300 font-semibold flex items-center gap-2">
-        <i class="fa-solid fa-clock-rotate-left"></i> Auto Saved Invoices History Active
-      </div>
-    </section>
-
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-      
-      <section class="lg:col-span-6 space-y-6 no-print">
-        
-        <div class="glow-card rounded-2xl p-6">
-          <h2 class="text-lg font-bold text-purple-400 mb-4 flex items-center gap-2">
+    <!-- Patient & Bill Info -->
+    <div class="bg-card p-5 rounded-xl mb-6">
+        <h2 class="text-lg font-semibold text-purple-300 mb-4 flex items-center gap-2">
             <i class="fa-solid fa-hospital-user"></i> Patient & Bill Info
-          </h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs text-slate-400 mb-1 font-bold">Patient Name</label>
-              <input type="text" id="custName" placeholder="e.g. Ali Ahmed" class="w-full p-2.5 input-3d rounded-xl font-semibold">
+                <label class="text-xs text-gray-400 mb-1 block">Patient Name</label>
+                <input type="text" id="custName" placeholder="e.g. Ali Ahmed" class="w-full p-2.5 rounded-lg input-style">
             </div>
             <div>
-              <label class="block text-xs text-slate-400 mb-1 font-bold">Contact Number</label>
-              <input type="text" id="custPhone" placeholder="e.g. +92 300 1234567" class="w-full p-2.5 input-3d rounded-xl font-semibold">
+                <label class="text-xs text-gray-400 mb-1 block">Contact Number</label>
+                <input type="text" id="custNum" placeholder="e.g. +92 300 1234567" class="w-full p-2.5 rounded-lg input-style">
             </div>
             <div>
-              <label class="block text-xs text-slate-400 mb-1 font-bold">Invoice Date</label>
-              <input type="text" id="invDate" readonly class="w-full p-2.5 bg-slate-900 border border-slate-800 text-purple-300 rounded-xl font-bold cursor-not-allowed">
+                <label class="text-xs text-gray-400 mb-1 block">Invoice Date</label>
+                <input type="date" id="invDate" class="w-full p-2.5 rounded-lg input-style">
             </div>
             <div>
-              <label class="block text-xs text-slate-400 mb-1 font-bold">Invoice # (Auto)</label>
-              <input type="text" id="invNumber" readonly class="w-full p-2.5 bg-slate-900 border border-slate-800 text-purple-300 rounded-xl font-bold cursor-not-allowed">
+                <label class="text-xs text-gray-400 mb-1 block">Invoice # (Auto)</label>
+                <input type="text" id="invNumber" readonly class="w-full p-2.5 rounded-lg input-style bg-slate-900/50 text-purple-400 font-bold">
             </div>
-          </div>
         </div>
+    </div>
 
-        <div class="glow-card rounded-2xl p-6">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-lg font-bold text-purple-400 flex items-center gap-2">
-              <i class="fa-solid fa-pills"></i> Pharmacy Items Entry
+    <!-- Items Entry -->
+    <div class="bg-card p-5 rounded-xl mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold text-purple-300 flex items-center gap-2">
+                <i class="fa-solid fa-capsules"></i> Pharmacy Items Entry
             </h2>
-            <button onclick="addItemRow()" class="px-3 py-1.5 bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500/40 text-purple-200 text-xs font-bold rounded-xl transition">
-              + Add Item
+            <button onclick="addItemRow()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-sm flex items-center gap-1">
+                <i class="fa-solid fa-plus"></i> Add Item
             </button>
-          </div>
+        </div>
 
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs">
-              <thead>
-                <tr class="border-b border-slate-700 text-slate-400 uppercase">
-                  <th class="p-2">Item Name</th>
-                  <th class="p-2 w-20">Mg/Str</th>
-                  <th class="p-2 w-16">Qty</th>
-                  <th class="p-2 w-20">Price</th>
-                  <th class="p-2 w-8"></th>
-                </tr>
-              </thead>
-              <tbody id="itemsTableBody">
-                </tbody>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead>
+                    <tr class="border-b border-slate-700 text-gray-400">
+                        <th class="p-2">ITEM NAME</th>
+                        <th class="p-2">MG/STR</th>
+                        <th class="p-2 w-20">QTY</th>
+                        <th class="p-2 w-24">PRICE</th>
+                        <th class="p-2 w-10"></th>
+                    </tr>
+                </thead>
+                <tbody id="itemsBody"></tbody>
             </table>
-          </div>
-
-          <div class="grid grid-cols-2 gap-4 mt-6 pt-4 border-t border-slate-800 text-sm">
-            <div>
-              <label class="block text-xs text-slate-400 mb-1 font-bold">Discount (<span class="currencySymbol">PKR</span>)</label>
-              <input type="number" id="discountInput" value="0" min="0" oninput="calculateTotals()" class="w-full p-2.5 input-3d rounded-xl font-semibold">
-            </div>
-            <div>
-              <label class="block text-xs text-slate-400 mb-1 font-bold">Tax Rate (%)</label>
-              <input type="number" id="taxInput" value="0" min="0" oninput="calculateTotals()" class="w-full p-2.5 input-3d rounded-xl font-semibold">
-            </div>
-          </div>
         </div>
 
-      </section>
-
-      <section class="lg:col-span-6 space-y-4">
-        
-        <div class="flex justify-end gap-3 no-print">
-          <button onclick="downloadPDF()" title="Download PDF" class="btn-circle bg-blue-600 hover:bg-blue-500 text-white">
-            <i class="fa-solid fa-download"></i>
-          </button>
-          <button onclick="printInvoice()" title="Print Bill" class="btn-circle bg-emerald-600 hover:bg-emerald-500 text-white">
-            <i class="fa-solid fa-print"></i>
-          </button>
-          <button onclick="shareInvoice()" title="Share Bill" class="btn-circle bg-amber-600 hover:bg-amber-500 text-white">
-            <i class="fa-solid fa-share-nodes"></i>
-          </button>
+        <div class="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-slate-700">
+            <div>
+                <label class="text-xs text-gray-400 block mb-1">Discount (PKR)</label>
+                <input type="number" id="discountInput" value="0" oninput="updateTotals()" class="w-full p-2 rounded-lg input-style">
+            </div>
+            <div>
+                <label class="text-xs text-gray-400 block mb-1">Tax Rate (%)</label>
+                <input type="number" id="taxInput" value="0" oninput="updateTotals()" class="w-full p-2 rounded-lg input-style">
+            </div>
         </div>
 
-        <div id="invoicePreview" class="print-area invoice-sheet p-6 md:p-8 border border-slate-200">
-          
-          <div class="flex justify-between items-start border-b-2 border-slate-200 pb-4 mb-4">
+        <!-- Action Buttons -->
+        <div class="flex justify-center gap-4 mt-6">
+            <button onclick="downloadPDF()" class="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full w-12 h-12 flex items-center justify-center shadow-lg"><i class="fa-solid fa-download"></i></button>
+            <button onclick="printInvoice()" class="bg-emerald-600 hover:bg-emerald-700 text-white p-3 rounded-full w-12 h-12 flex items-center justify-center shadow-lg"><i class="fa-solid fa-print"></i></button>
+            <button onclick="shareInvoice()" class="bg-amber-600 hover:bg-amber-700 text-white p-3 rounded-full w-12 h-12 flex items-center justify-center shadow-lg"><i class="fa-solid fa-share-nodes"></i></button>
+        </div>
+    </div>
+
+    <!-- Live Preview -->
+    <div id="invoicePreview" class="bg-white text-slate-800 p-6 rounded-xl shadow-2xl relative">
+        <div class="flex justify-between items-start border-b pb-4 mb-4">
             <div>
-              <h1 id="dispBizName" class="text-2xl font-black text-purple-900 uppercase">SHIFA PHARMACY</h1>
-              <p id="dispBizCat" class="text-xs font-bold text-purple-700">Pharmacy & Medical Store</p>
-              <p id="dispBizAddress" class="text-xs text-slate-600 mt-1">Main Bazar, Peshawar, Pakistan</p>
-              <p class="text-xs text-slate-600">Phone: <span id="dispBizPhone">+92 300 1234567</span> | Lic: <span id="dispBizLic">PHARM-8890</span></p>
+                <h2 id="storeNamePreview" class="text-xl font-bold text-purple-900">SHIFA PHARMACY</h2>
+                <p id="storeSubPreview" class="text-xs text-gray-500">Pharmacy & Medical Store</p>
+                <p id="storeAddressPreview" class="text-xs text-gray-500">Main Bazar, Peshawar, Pakistan</p>
+                <p id="storePhonePreview" class="text-xs text-gray-500">Phone: +92 300 1234567 | Lic: PHARM-8890</p>
+            </div>
+            <span class="bg-purple-100 text-purple-800 text-xs font-bold px-2.5 py-1 rounded">INVOICE</span>
+        </div>
+
+        <div class="flex justify-between text-xs mb-4">
+            <div>
+                <p class="text-gray-400">PATIENT INFO</p>
+                <p id="dispName" class="font-bold text-slate-700">Ali Ahmed</p>
+                <p id="dispNum" class="text-gray-600">+92 300 0000000</p>
             </div>
             <div class="text-right">
-              <img id="dispLogo" src="https://via.placeholder.com/70?text=LOGO" alt="Logo" class="h-16 w-16 object-contain rounded-lg border p-1 mb-1 ml-auto">
-              <span class="text-xs font-black bg-purple-900 text-white px-2.5 py-0.5 rounded-full uppercase">INVOICE</span>
+                <p class="text-gray-400">BILL META</p>
+                <p class="font-bold">Inv #: <span id="dispInvNum" class="text-purple-700">101</span></p>
+                <p>Date: <span id="dispDate">-</span></p>
             </div>
-          </div>
+        </div>
 
-          <div class="grid grid-cols-2 gap-2 mb-4 bg-purple-50 p-3 rounded-xl border border-purple-100 text-xs">
-            <div>
-              <p class="text-slate-400 font-bold uppercase">Patient Info</p>
-              <p id="dispCustName" class="font-bold text-slate-800 text-sm">Ali Ahmed</p>
-              <p id="dispCustPhone" class="text-slate-600">+92 300 0000000</p>
-            </div>
-            <div class="text-right">
-              <p class="text-slate-400 font-bold uppercase">Bill Meta</p>
-              <p class="font-bold text-slate-800">Inv #: <span id="dispInvNumber" class="text-purple-700">101</span></p>
-              <p class="text-slate-600">Date: <span id="dispInvDate">-</span></p>
-            </div>
-          </div>
-
-          <table class="w-full mb-4 border-collapse text-xs">
+        <table class="w-full text-left text-xs mb-4">
             <thead>
-              <tr class="bg-purple-900 text-white uppercase">
-                <th class="p-2 text-left">#</th>
-                <th class="p-2 text-left">Medicine Description</th>
-                <th class="p-2 text-center">Mg/Str</th>
-                <th class="p-2 text-center">Qty</th>
-                <th class="p-2 text-right">Price</th>
-                <th class="p-2 text-right">Total</th>
-              </tr>
+                <tr class="bg-purple-900 text-white">
+                    <th class="p-2">#</th>
+                    <th class="p-2">MEDICINE DESCRIPTION</th>
+                    <th class="p-2">MG/STR</th>
+                    <th class="p-2">QTY</th>
+                    <th class="p-2">PRICE</th>
+                    <th class="p-2 text-right">TOTAL</th>
+                </tr>
             </thead>
-            <tbody id="invoiceTableBody" class="divide-y divide-slate-100 text-slate-700 font-medium">
-              </tbody>
-          </table>
+            <tbody id="previewBody"></tbody>
+        </table>
 
-          <div class="flex justify-end pt-2 border-t-2 border-slate-200">
-            <div class="w-1/2 space-y-1 text-xs">
-              <div class="flex justify-between text-slate-600">
-                <span>Total Items:</span>
-                <span id="dispTotalQty" class="font-bold">0</span>
-              </div>
-              <div class="flex justify-between text-slate-600">
-                <span>Subtotal:</span>
-                <span><span class="currencySymbol">PKR</span> <span id="dispSubTotal">0.00</span></span>
-              </div>
-              <div class="flex justify-between text-red-500">
-                <span>Discount:</span>
-                <span>- <span class="currencySymbol">PKR</span> <span id="dispDiscount">0.00</span></span>
-              </div>
-              <div class="flex justify-between text-slate-600">
-                <span>Tax:</span>
-                <span>+ <span class="currencySymbol">PKR</span> <span id="dispTax">0.00</span></span>
-              </div>
-              <div class="flex justify-between font-black text-sm text-purple-900 border-t pt-1 mt-1">
-                <span>Grand Total:</span>
-                <span><span class="currencySymbol">PKR</span> <span id="dispGrandTotal">0.00</span></span>
-              </div>
+        <div class="flex justify-end text-xs mb-6">
+            <div class="w-48 space-y-1">
+                <div class="flex justify-between"><span>Subtotal:</span><span id="dispSubtotal" class="font-bold">PKR 0.00</span></div>
+                <div class="flex justify-between text-red-500"><span>Discount:</span><span id="dispDiscount">- PKR 0.00</span></div>
+                <div class="flex justify-between"><span>Tax:</span><span id="dispTax">+ PKR 0.00</span></div>
+                <div class="flex justify-between text-sm font-bold border-t pt-1 border-slate-300"><span>Grand Total:</span><span id="dispGrandTotal" class="text-purple-900">PKR 0.00</span></div>
             </div>
-          </div>
-
         </div>
 
-      </section>
-
+        <div class="text-center text-[10px] text-gray-400 border-t pt-3 mt-4">
+            Powered by RakaBill
+        </div>
     </div>
-  </main>
 
-  <div id="profileModal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4 z-50 no-print">
-    <div class="glow-card rounded-3xl max-w-xl w-full p-6 space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <h3 class="text-lg font-bold text-purple-400"><i class="fa-solid fa-user-gear"></i> Business Profile Settings</h3>
-        <button onclick="toggleProfileModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
-      </div>
-
-      <div class="grid grid-cols-2 gap-4 text-xs">
-        <div>
-          <label class="block text-slate-400 mb-1 font-bold">Business Category</label>
-          <select id="bizCategory" class="w-full p-2.5 input-3d rounded-xl font-semibold">
-            <option value="Pharmacy & Medical Store">Pharmacy & Medical Store</option>
-            <option value="Hospital Store">Hospital Store</option>
-          </select>
+    <!-- Profile Setup Modal -->
+    <div id="profileModal" class="fixed inset-0 bg-black/80 flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-slate-900 p-6 rounded-xl w-full max-w-md border border-slate-700">
+            <h3 class="text-lg font-bold text-purple-400 mb-4">Business Profile Setup</h3>
+            <div class="space-y-3">
+                <div>
+                    <label class="text-xs text-gray-400">Business Name</label>
+                    <input type="text" id="setupStoreName" placeholder="Pharmacy Name" class="w-full p-2 rounded input-style">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400">Sub-heading</label>
+                    <input type="text" id="setupStoreSub" placeholder="Pharmacy & Medical Store" class="w-full p-2 rounded input-style">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400">Address</label>
+                    <input type="text" id="setupStoreAddress" placeholder="Address..." class="w-full p-2 rounded input-style">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400">Phone & License</label>
+                    <input type="text" id="setupStorePhone" placeholder="Phone & License Details" class="w-full p-2 rounded input-style">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 mt-5">
+                <button onclick="toggleProfileModal()" class="px-4 py-2 bg-gray-700 text-white text-sm rounded">Cancel</button>
+                <button onclick="saveProfileSettings()" class="px-4 py-2 bg-purple-600 text-white text-sm rounded">Save Profile</button>
+            </div>
         </div>
-        <div>
-          <label class="block text-slate-400 mb-1 font-bold">Pharmacy Name</label>
-          <input type="text" id="bizName" value="Shifa Pharmacy" class="w-full p-2.5 input-3d rounded-xl font-semibold">
-        </div>
-        <div>
-          <label class="block text-slate-400 mb-1 font-bold">Country</label>
-          <select id="bizCountry" onchange="updateCountryCurrency()" class="w-full p-2.5 input-3d rounded-xl font-semibold">
-            <option value="Pakistan">Pakistan (PKR)</option>
-            <option value="UAE">UAE (AED)</option>
-            <option value="USA">USA ($)</option>
-            <option value="UK">UK (£)</option>
-            <option value="Saudi Arabia">Saudi Arabia (SAR)</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-slate-400 mb-1 font-bold">Drug License #</label>
-          <input type="text" id="bizLicense" value="PHARM-8890" class="w-full p-2.5 input-3d rounded-xl font-semibold">
-        </div>
-        <div>
-          <label class="block text-slate-400 mb-1 font-bold">Business Phone</label>
-          <input type="text" id="bizPhone" value="+92 300 1234567" class="w-full p-2.5 input-3d rounded-xl font-semibold">
-        </div>
-        <div>
-          <label class="block text-slate-400 mb-1 font-bold">Upload Logo</label>
-          <input type="file" id="bizLogo" accept="image/*" onchange="previewLogo(event)" class="w-full p-1.5 input-3d rounded-xl text-xs">
-        </div>
-        <div class="col-span-2">
-          <label class="block text-slate-400 mb-1 font-bold">Full Address</label>
-          <input type="text" id="bizAddress" value="Main Bazar, Peshawar, Pakistan" class="w-full p-2.5 input-3d rounded-xl font-semibold">
-        </div>
-      </div>
-
-      <button onclick="toggleProfileModal()" class="w-full py-2.5 bg-purple-600 hover:bg-purple-500 font-bold rounded-xl text-white text-xs">
-        Save Profile Changes
-      </button>
     </div>
-  </div>
 
-  <script>
-    let globalCurrency = 'PKR';
-    let currentInvoiceNum = 101;
-    let savedInvoices = [];
+    <script>
+        let currentInvoiceNum = parseInt(localStorage.getItem('lastInvNum') || '101');
 
-    window.onload = function() {
-      // Auto Date
-      const today = new Date().toISOString().split('T')[0];
-      document.getElementById('invDate').value = today;
-      document.getElementById('dispInvDate').innerText = today;
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('invDate').valueAsDate = new Date();
+            document.getElementById('invNumber').value = currentInvoiceNum;
+            loadProfileSettings();
+            addItemRow();
+            setupRealtimeListeners();
+            updateTotals();
+        });
 
-      // Auto Serial Invoice Numbering
-      document.getElementById('invNumber').value = currentInvoiceNum;
-      document.getElementById('dispInvNumber').innerText = currentInvoiceNum;
+        function setupRealtimeListeners() {
+            ['custName', 'custNum', 'invDate'].forEach(id => {
+                document.getElementById(id).addEventListener('input', syncMeta);
+            });
+        }
 
-      // Clean Start: Load 1 empty row
-      addItemRow();
+        function syncMeta() {
+            document.getElementById('dispName').innerText = document.getElementById('custName').value || 'Patient Name';
+            document.getElementById('dispNum').innerText = document.getElementById('custNum').value || '+92 300 0000000';
+            document.getElementById('dispDate').innerText = document.getElementById('invDate').value || '-';
+            document.getElementById('dispInvNum').innerText = document.getElementById('invNumber').value;
+        }
 
-      // Profile real-time update listeners
-      ['bizName', 'bizCategory', 'bizAddress', 'bizPhone', 'bizLicense', 'custName', 'custPhone'].forEach(id => {
-        document.getElementById(id).addEventListener('input', updateInvoiceHeader);
-      });
-    };
+        function addItemRow() {
+            const tbody = document.getElementById('itemsBody');
+            const row = document.createElement('tr');
+            row.className = "border-b border-slate-800/50";
+            row.innerHTML = `
+                <td class="p-1.5"><input type="text" placeholder="Medicine" class="item-name w-full p-1.5 rounded input-style text-xs" oninput="updateTotals()"></td>
+                <td class="p-1.5"><input type="text" placeholder="500mg" class="item-mg w-full p-1.5 rounded input-style text-xs"></td>
+                <td class="p-1.5"><input type="number" value="1" min="1" class="item-qty w-full p-1.5 rounded input-style text-xs" oninput="updateTotals()"></td>
+                <td class="p-1.5"><input type="number" value="0" min="0" class="item-price w-full p-1.5 rounded input-style text-xs" oninput="updateTotals()"></td>
+                <td class="p-1.5 text-center"><button onclick="this.closest('tr').remove(); updateTotals();" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-trash"></i></button></td>
+            `;
+            tbody.appendChild(row);
+            updateTotals();
+        }
 
-    function toggleProfileModal() {
-      const modal = document.getElementById('profileModal');
-      modal.classList.toggle('hidden');
-      modal.classList.toggle('flex');
-    }
+        function updateTotals() {
+            syncMeta();
+            const names = document.querySelectorAll('.item-name');
+            const mgs = document.querySelectorAll('.item-mg');
+            const qtys = document.querySelectorAll('.item-qty');
+            const prices = document.querySelectorAll('.item-price');
+            
+            const previewBody = document.getElementById('previewBody');
+            previewBody.innerHTML = '';
+            
+            let subtotal = 0;
 
-    function updateCountryCurrency() {
-      const country = document.getElementById('bizCountry').value;
-      const currencyMap = { 'Pakistan': 'PKR', 'UAE': 'AED', 'USA': '$', 'UK': '£', 'Saudi Arabia': 'SAR' };
-      globalCurrency = currencyMap[country] || 'PKR';
-      document.querySelectorAll('.currencySymbol').forEach(el => el.innerText = globalCurrency);
-      calculateTotals();
-    }
+            names.forEach((item, i) => {
+                const nameVal = item.value;
+                const mgVal = mgs[i].value;
+                const qtyVal = parseFloat(qtys[i].value) || 0;
+                const priceVal = parseFloat(prices[i].value) || 0;
+                const lineTotal = qtyVal * priceVal;
+                subtotal += lineTotal;
 
-    function previewLogo(event) {
-      const reader = new FileReader();
-      reader.onload = function() { document.getElementById('dispLogo').src = reader.result; }
-      if (event.target.files[0]) reader.readAsDataURL(event.target.files[0]);
-    }
+                if (nameVal) {
+                    previewBody.innerHTML += `
+                        <tr class="border-b">
+                            <td class="p-2">${i + 1}</td>
+                            <td class="p-2 font-semibold">${nameVal}</td>
+                            <td class="p-2">${mgVal}</td>
+                            <td class="p-2">${qtyVal}</td>
+                            <td class="p-2">${priceVal.toFixed(2)}</td>
+                            <td class="p-2 text-right font-bold">${lineTotal.toFixed(2)}</td>
+                        </tr>
+                    `;
+                }
+            });
 
-    function updateInvoiceHeader() {
-      document.getElementById('dispBizName').innerText = document.getElementById('bizName').value || 'SHIFA PHARMACY';
-      document.getElementById('dispBizCat').innerText = document.getElementById('bizCategory').value;
-      document.getElementById('dispBizAddress').innerText = document.getElementById('bizAddress').value;
-      document.getElementById('dispBizPhone').innerText = document.getElementById('bizPhone').value;
-      document.getElementById('dispBizLic').innerText = document.getElementById('bizLicense').value;
+            const discount = parseFloat(document.getElementById('discountInput').value) || 0;
+            const taxRate = parseFloat(document.getElementById('taxInput').value) || 0;
+            const tax = ((subtotal - discount) * taxRate) / 100;
+            const grandTotal = Math.max(0, subtotal - discount + tax);
 
-      document.getElementById('dispCustName').innerText = document.getElementById('custName').value || 'Patient Name';
-      document.getElementById('dispCustPhone').innerText = document.getElementById('custPhone').value || '-';
-    }
+            document.getElementById('dispSubtotal').innerText = `PKR ${subtotal.toFixed(2)}`;
+            document.getElementById('dispDiscount').innerText = `- PKR ${discount.toFixed(2)}`;
+            document.getElementById('dispTax').innerText = `+ PKR ${tax.toFixed(2)}`;
+            document.getElementById('dispGrandTotal').innerText = `PKR ${grandTotal.toFixed(2)}`;
+        }
 
-    function addItemRow() {
-      const tbody = document.getElementById('itemsTableBody');
-      const tr = document.createElement('tr');
-      tr.className = "border-b border-slate-800";
-      tr.innerHTML = `
-        <td class="p-1.5"><input type="text" placeholder="Medicine" class="item-name w-full p-1.5 input-3d rounded-lg text-xs" oninput="calculateTotals()"></td>
-        <td class="p-1.5"><input type="text" placeholder="500mg" class="item-mg w-full p-1.5 input-3d rounded-lg text-xs text-center" oninput="calculateTotals()"></td>
-        <td class="p-1.5"><input type="number" value="1" min="1" class="item-qty w-full p-1.5 input-3d rounded-lg text-xs text-center" oninput="calculateTotals()"></td>
-        <td class="p-1.5"><input type="number" value="0" min="0" class="item-price w-full p-1.5 input-3d rounded-lg text-xs text-right" oninput="calculateTotals()"></td>
-        <td class="p-1.5 text-center"><button onclick="this.closest('tr').remove(); calculateTotals();" class="text-red-400 font-bold">✕</button></td>
-      `;
-      tbody.appendChild(tr);
-    }
+        function toggleProfileModal() {
+            document.getElementById('profileModal').classList.toggle('hidden');
+        }
 
-    function calculateTotals() {
-      updateInvoiceHeader();
-      
-      const inputRows = document.querySelectorAll('#itemsTableBody tr');
-      const previewTbody = document.getElementById('invoiceTableBody');
-      previewTbody.innerHTML = '';
+        function saveProfileSettings() {
+            const profile = {
+                name: document.getElementById('setupStoreName').value,
+                sub: document.getElementById('setupStoreSub').value,
+                address: document.getElementById('setupStoreAddress').value,
+                phone: document.getElementById('setupStorePhone').value
+            };
+            localStorage.setItem('rakaProfile', JSON.stringify(profile));
+            loadProfileSettings();
+            toggleProfileModal();
+        }
 
-      let totalQty = 0;
-      let subTotal = 0;
+        function loadProfileSettings() {
+            const saved = localStorage.getItem('rakaProfile');
+            if (saved) {
+                const p = JSON.parse(saved);
+                if (p.name) document.getElementById('storeNamePreview').innerText = p.name;
+                if (p.sub) document.getElementById('storeSubPreview').innerText = p.sub;
+                if (p.address) document.getElementById('storeAddressPreview').innerText = p.address;
+                if (p.phone) document.getElementById('storePhonePreview').innerText = p.phone;
+            }
+        }
 
-      inputRows.forEach((row, index) => {
-        const name = row.querySelector('.item-name').value || '-';
-        const mg = row.querySelector('.item-mg').value || '-';
-        const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
-        const price = parseFloat(row.querySelector('.item-price').value) || 0;
-        const amount = qty * price;
+        function downloadPDF() {
+            const element = document.getElementById('invoicePreview');
+            html2pdf().set({
+                margin: 0.3,
+                filename: `Invoice_${document.getElementById('invNumber').value}.pdf`,
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            }).from(element).save();
+            incrementInvoice();
+        }
 
-        totalQty += qty;
-        subTotal += amount;
+        function printInvoice() {
+            window.print();
+            incrementInvoice();
+        }
 
-        const prevTr = document.createElement('tr');
-        prevTr.className = "border-b border-slate-100";
-        prevTr.innerHTML = `
-          <td class="p-2 font-bold text-slate-400">${index + 1}</td>
-          <td class="p-2 font-bold text-slate-800">${name}</td>
-          <td class="p-2 text-center text-slate-600">${mg}</td>
-          <td class="p-2 text-center font-semibold">${qty}</td>
-          <td class="p-2 text-right">${globalCurrency} ${price.toFixed(2)}</td>
-          <td class="p-2 text-right font-bold text-slate-800">${globalCurrency} ${amount.toFixed(2)}</td>
-        `;
-        previewTbody.appendChild(prevTr);
-      });
+        function shareInvoice() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'RakaBill Invoice',
+                    text: `Invoice #${document.getElementById('invNumber').value} - Total: ${document.getElementById('dispGrandTotal').innerText}`
+                });
+            } else {
+                alert(`Invoice #${document.getElementById('invNumber').value} ready to share!`);
+            }
+            incrementInvoice();
+        }
 
-      const discount = parseFloat(document.getElementById('discountInput').value) || 0;
-      const taxPercent = parseFloat(document.getElementById('taxInput').value) || 0;
-
-      const taxableBase = Math.max(0, subTotal - discount);
-      const taxAmount = (taxableBase * taxPercent) / 100;
-      const grandTotal = taxableBase + taxAmount;
-
-      document.getElementById('dispTotalQty').innerText = totalQty;
-      document.getElementById('dispSubTotal').innerText = subTotal.toFixed(2);
-      document.getElementById('dispDiscount').innerText = discount.toFixed(2);
-      document.getElementById('dispTax').innerText = taxAmount.toFixed(2);
-      document.getElementById('dispGrandTotal').innerText = grandTotal.toFixed(2);
-    }
-
-    function saveCurrentInvoiceHistory() {
-      const invData = {
-        invNum: currentInvoiceNum,
-        patientName: document.getElementById('custName').value || 'Patient',
-        grandTotal: document.getElementById('dispGrandTotal').innerText
-      };
-      savedInvoices.push(invData);
-    }
-
-    function downloadPDF() {
-      saveCurrentInvoiceHistory();
-      const element = document.getElementById('invoicePreview');
-      html2pdf().set({ margin: 0.3, filename: `Invoice-${currentInvoiceNum}.pdf`, html2canvas: { scale: 2 } }).from(element).save();
-      incrementInvoice();
-    }
-
-    function printInvoice() {
-      saveCurrentInvoiceHistory();
-      window.print();
-      incrementInvoice();
-    }
-
-    function shareInvoice() {
-      const total = document.getElementById('dispGrandTotal').innerText;
-      if (navigator.share) {
-        navigator.share({ title: 'RakaBill Invoice', text: `Invoice #${currentInvoiceNum} Total: ${globalCurrency} ${total}`, url: window.location.href });
-      } else {
-        alert(`Invoice #${currentInvoiceNum} Total: ${globalCurrency} ${total}`);
-      }
-    }
-
-    function incrementInvoice() {
-      currentInvoiceNum++;
-      document.getElementById('invNumber').value = currentInvoiceNum;
-      document.getElementById('dispInvNumber').innerText = currentInvoiceNum;
-    }
-
-    function searchInvoices() {
-      const query = document.getElementById('searchInput').value.toLowerCase();
-      if (!query) return;
-      const match = savedInvoices.find(i => i.invNum.toString().includes(query) || i.patientName.toLowerCase().includes(query));
-      if (match) {
-        alert(`Found Invoice #${match.invNum} for ${match.patientName} - Total: ${globalCurrency} ${match.grandTotal}`);
-      }<script src="app.js"></script>
-    }
-  </script>
+        function incrementInvoice() {
+            currentInvoiceNum++;
+            localStorage.setItem('lastInvNum', currentInvoiceNum);
+            document.getElementById('invNumber').value = currentInvoiceNum;
+            syncMeta();
+        }
+    </script>
 </body>
 </html>
-
