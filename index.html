@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rakabill - Modern Universal Invoice Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #print-area, #print-area * { visibility: visible; }
+      #print-area { position: absolute; left: 0; top: 0; width: 100%; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-slate-950/80 sticky top-0 z-50 backdrop-blur no-print">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
+        Rakabill
+      </h1>
+      <div class="flex gap-2">
+        <button onclick="window.print()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm border border-slate-700">Print</button>
+        <button onclick="downloadPDF()" class="px-3 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-semibold">Download PDF</button>
+        <button onclick="shareWhatsApp()" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg text-sm font-semibold">WhatsApp</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- Left Column: Controls & Dynamic Form -->
+    <div class="lg:col-span-6 space-y-6 no-print">
+      
+      <!-- Category Selector -->
+      <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+        <label class="block text-xs uppercase text-slate-400 font-semibold mb-2">Business Category</label>
+        <select id="categorySelect" onchange="changeCategory()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+          <option value="pharmacy">Medical / Pharmacy</option>
+          <option value="hotel">Hotel / Restaurant</option>
+          <option value="grocery">Grocery / Supermarket</option>
+          <option value="garments">Garments / Clothing</option>
+          <option value="general">General Retail & Services</option>
+        </select>
+      </div>
+
+      <!-- Business & Customer Info -->
+      <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 space-y-4">
+        <h2 class="text-sm font-semibold text-slate-300">Basic Details</h2>
+        <div class="grid grid-cols-2 gap-3">
+          <input type="text" id="bizName" placeholder="Business Name" oninput="render()" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm">
+          <input type="text" id="bizContact" placeholder="Business Contact" oninput="render()" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm">
+          <input type="text" id="custName" placeholder="Customer Name" oninput="render()" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm">
+          <input type="text" id="custContact" placeholder="Customer Phone" oninput="render()" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm">
+        </div>
+      </div>
+
+      <!-- Item Form Inputs -->
+      <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 space-y-4">
+        <h2 class="text-sm font-semibold text-slate-300">AddItem</h2>
+        <div id="dynamicInputs" class="grid grid-cols-2 gap-3"></div>
+        <button onclick="addItem()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm font-medium">Add to Invoice</button>
+      </div>
+
+      <!-- Summary Discounts/Tax Inputs -->
+      <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs text-slate-400">Tax (%)</label>
+          <input type="number" id="taxRate" value="5" oninput="render()" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm">
+        </div>
+        <div>
+          <label class="text-xs text-slate-400">Flat Discount ($)</label>
+          <input type="number" id="flatDiscount" value="0" oninput="render()" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm">
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Live Invoice Preview -->
+    <div class="lg:col-span-6">
+      <div id="print-area" class="bg-white text-slate-900 p-8 rounded-xl shadow-2xl min-h-[650px] flex flex-col justify-between">
+        <div>
+          <!-- Header Meta -->
+          <div class="flex justify-between items-start border-b pb-4 mb-6" id="invoiceHeader">
+            <div>
+              <h2 id="lblBizName" class="text-2xl font-bold text-slate-800">Business Name</h2>
+              <p id="lblBizContact" class="text-sm text-slate-500">Contact Details</p>
+            </div>
+            <div class="text-right">
+              <span id="categoryBadge" class="inline-block px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider mb-2">Category</span>
+              <p class="text-xs text-slate-400">Invoice: <span id="invNumber" class="font-mono text-slate-700">RKB-1029</span></p>
+            </div>
+          </div>
+
+          <!-- Customer Meta -->
+          <div class="mb-6 bg-slate-50 p-3 rounded border border-slate-100">
+            <p class="text-xs text-slate-400 uppercase font-semibold">Billed To:</p>
+            <p id="lblCustName" class="font-medium text-slate-800">Customer Name</p>
+            <p id="lblCustContact" class="text-sm text-slate-500">Customer Contact</p>
+          </div>
+
+          <!-- Dynamic Item Table -->
+          <table class="w-full text-left text-sm mb-6">
+            <thead id="tableHeader" class="border-b-2 text-slate-600"></thead>
+            <tbody id="tableBody" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+
+        <!-- Totals & Summary -->
+        <div class="border-t pt-4">
+          <div class="w-1/2 ml-auto space-y-2 text-sm">
+            <div class="flex justify-between text-slate-500"><span>Subtotal:</span><span id="lblSubtotal">$0.00</span></div>
+            <div class="flex justify-between text-slate-500"><span>Tax:</span><span id="lblTax">$0.00</span></div>
+            <div class="flex justify-between text-slate-500"><span>Discount:</span><span id="lblDiscount">-$0.00</span></div>
+            <div class="flex justify-between text-lg font-bold text-slate-900 border-t pt-2"><span>Total:</span><span id="lblTotal">$0.00</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const CONFIGS = {
+      pharmacy: {
+        badgeClass: 'bg-blue-100 text-blue-800',
+        fields: [
+          { id: 'name', label: 'Medicine Name', type: 'text' },
+          { id: 'batch', label: 'Batch No', type: 'text' },
+          { id: 'qty', label: 'Qty', type: 'number' },
+          { id: 'price', label: 'Price', type: 'number' }
+        ],
+        cols: ['Medicine', 'Batch', 'Qty', 'Price', 'Total']
+      },
+      hotel: {
+        badgeClass: 'bg-amber-100 text-amber-800',
+        fields: [
+          { id: 'name', label: 'Item/Service Name', type: 'text' },
+          { id: 'tableNo', label: 'Table/Room No', type: 'text' },
+          { id: 'qty', label: 'Qty/Hours', type: 'number' },
+          { id: 'price', label: 'Rate', type: 'number' }
+        ],
+        cols: ['Service', 'Table/Room', 'Qty', 'Rate', 'Total']
+      },
+      grocery: {
+        badgeClass: 'bg-emerald-100 text-emerald-800',
+        fields: [
+          { id: 'name', label: 'Item Name', type: 'text' },
+          { id: 'unit', label: 'Unit (kg/pcs)', type: 'text' },
+          { id: 'qty', label: 'Weight/Qty', type: 'number' },
+          { id: 'price', label: 'Price/Unit', type: 'number' }
+        ],
+        cols: ['Item', 'Unit', 'Qty', 'Price', 'Total']
+      },
+      garments: {
+        badgeClass: 'bg-purple-100 text-purple-800',
+        fields: [
+          { id: 'name', label: 'Item Name', type: 'text' },
+          { id: 'size', label: 'Size/Color', type: 'text' },
+          { id: 'qty', label: 'Qty', type: 'number' },
+          { id: 'price', label: 'Unit Price', type: 'number' }
+        ],
+        cols: ['Garment', 'Size/Color', 'Qty', 'Price', 'Total']
+      },
+      general: {
+        badgeClass: 'bg-slate-100 text-slate-800',
+        fields: [
+          { id: 'name', label: 'Item Description', type: 'text' },
+          { id: 'qty', label: 'Qty', type: 'number' },
+          { id: 'price', label: 'Price', type: 'number' }
+        ],
+        cols: ['Description', 'Qty', 'Price', 'Total']
+      }
+    };
+
+    let state = { category: 'pharmacy', items: [] };
+
+    function changeCategory() {
+      state.category = document.getElementById('categorySelect').value;
+      state.items = [];
+      renderInputs();
+      render();
+    }
+
+    function renderInputs() {
+      const container = document.getElementById('dynamicInputs');
+      const fields = CONFIGS[state.category].fields;
+      container.innerHTML = fields.map(f => `
+        <div>
+          <label class="text-xs text-slate-400">${f.label}</label>
+          <input type="${f.type}" id="input_${f.id}" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm">
+        </div>
+      `).join('');
+    }
+
+    function addItem() {
+      const fields = CONFIGS[state.category].fields;
+      let newItem = {};
+      fields.forEach(f => {
+        newItem[f.id] = document.getElementById(`input_${f.id}`).value || '-';
+      });
+      state.items.push(newItem);
+      render();
+    }
+
+    function render() {
+      const cfg = CONFIGS[state.category];
+      
+      // Basic Texts
+      document.getElementById('lblBizName').innerText = document.getElementById('bizName').value || 'Your Business Name';
+      document.getElementById('lblBizContact').innerText = document.getElementById('bizContact').value || 'Address & Contact Info';
+      document.getElementById('lblCustName').innerText = document.getElementById('custName').value || 'Client Name';
+      document.getElementById('lblCustContact').innerText = document.getElementById('custContact').value || 'Client Contact Info';
+      
+      // Badge
+      const badge = document.getElementById('categoryBadge');
+      badge.innerText = state.category;
+      badge.className = `inline-block px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider mb-2 ${cfg.badgeClass}`;
+
+      // Table Header
+      document.getElementById('tableHeader').innerHTML = `<tr>${cfg.cols.map(c => `<th class="py-2">${c}</th>`).join('')}</tr>`;
+
+      // Table Body & Math
+      let subtotal = 0;
+      const body = document.getElementById('tableBody');
+      body.innerHTML = state.items.map(item => {
+        const qty = parseFloat(item.qty) || 0;
+        const price = parseFloat(item.price) || 0;
+        const lineTotal = qty * price;
+        subtotal += lineTotal;
+
+        const rowValues = cfg.fields.map(f => item[f.id]);
+        rowValues.push(`$${lineTotal.toFixed(2)}`);
+
+        return `<tr>${rowValues.map(v => `<td class="py-2 text-slate-700">${v}</td>`).join('')}</tr>`;
+      }).join('');
+
+      // Totals
+      const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+      const flatDiscount = parseFloat(document.getElementById('flatDiscount').value) || 0;
+      const tax = (subtotal * taxRate) / 100;
+      const grandTotal = Math.max(0, subtotal + tax - flatDiscount);
+
+      document.getElementById('lblSubtotal').innerText = `$${subtotal.toFixed(2)}`;
+      document.getElementById('lblTax').innerText = `$${tax.toFixed(2)}`;
+      document.getElementById('lblDiscount').innerText = `-$${flatDiscount.toFixed(2)}`;
+      document.getElementById('lblTotal').innerText = `$${grandTotal.toFixed(2)}`;
+    }
+
+    function downloadPDF() {
+      const element = document.getElementById('print-area');
+      html2pdf().from(element).save('invoice.pdf');
+    }
+
+    function shareWhatsApp() {
+      const phone = document.getElementById('custContact').value;
+      const total = document.getElementById('lblTotal').innerText;
+      const msg = encodeURIComponent(`Hello! Here is your invoice total: ${total}`);
+      window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+    }
+
+    // Init
+    renderInputs();
+    render();
+  </script>
+</body>
+</html>
+
