@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rakabill - Dynamic Dashboard & Invoicing</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -12,18 +13,38 @@
     </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        .gradient-text {
+            background: linear-gradient(135deg, #0052FF 0%, #031B4E 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Fixed Print CSS Engine - Fixes Blank/Empty Print Issue */
         @media print {
-            body * { visibility: hidden; }
-            #printableInvoice, #printableInvoice * { visibility: visible; }
-            #printableInvoice { position: absolute; left: 0; top: 0; width: 100%; }
-            .no-print { display: none !important; }
+            body * {
+                visibility: hidden;
+            }
+            #printableArea, #printableArea * {
+                visibility: visible;
+            }
+            #printableArea {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                display: block !important;
+            }
+            .no-print {
+                display: none !important;
+            }
         }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans transition-colors duration-200">
 
-    <!-- Header Navigation -->
-    <header class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-3 flex items-center justify-between sticky top-0 z-40 no-print">
+    <!-- Header Navigation (Exact Original Structure + Dark Mode Toggle) -->
+    <header class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-3 flex items-center justify-between sticky top-0 z-50 no-print">
+        <!-- Exact Left Side Logo Pattern -->
         <div class="flex items-center gap-3">
             <div class="w-10 h-12 bg-gradient-to-br from-blue-600 to-blue-900 rounded-lg relative flex items-center justify-center text-white font-bold text-xl shadow-md">
                 R
@@ -34,13 +55,17 @@
             </div>
         </div>
 
+        <!-- User Profile & Controls -->
         <div class="flex items-center gap-4">
-            <!-- Theme Toggle Button -->
+            <!-- Dark / Light Mode Toggle Switch -->
             <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600">
                 <i id="themeIcon" class="fa-solid fa-moon"></i>
             </button>
 
-            <!-- Profile Category Switcher -->
+            <div class="text-right hidden sm:block">
+                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100" id="userName">User Profile</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400" id="userRole">Selected Business Type</p>
+            </div>
             <select id="categorySelector" onchange="switchCategory(this.value)" class="bg-blue-50 dark:bg-gray-700 border border-blue-200 dark:border-gray-600 text-blue-900 dark:text-white font-medium text-sm rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-blue-500">
                 <optgroup label="Medical & Health">
                     <option value="pharmacy">Pharmacy</option>
@@ -67,7 +92,7 @@
         </div>
     </header>
 
-    <!-- Main Dashboard Container -->
+    <!-- User Dashboard Container -->
     <main class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 no-print">
 
         <!-- Form & Items Selector -->
@@ -81,43 +106,46 @@
                     <span id="categoryBadge" class="bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300 text-xs font-semibold px-3 py-1 rounded-full">Pharmacy</span>
                 </div>
 
-                <!-- Customer Details -->
+                <!-- Customer Details Input -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Customer / Patient Name</label>
-                        <input type="text" id="custName" placeholder="Enter Name" class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="text" id="custName" placeholder="Customer Name" class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Contact Number</label>
-                        <input type="text" id="custPhone" placeholder="Enter Phone" class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="text" id="custPhone" placeholder="Phone Number" class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
 
-                <!-- Item Controls -->
+                <!-- Item Add Controls -->
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                     <div class="md:col-span-2">
-                        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Select Item</label>
-                        <select id="itemDropdown" onchange="autoFillItemDetails()" class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Select / Search Item</label>
+                        <select id="itemDropdown" onchange="autoFillItemDetails()" class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                            <!-- Populated Dynamically -->
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Quantity</label>
-                        <input type="number" id="itemQty" value="1" min="1" class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Quantity / Count</label>
+                        <input type="number" id="itemQty" value="1" min="1" class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                     <div class="flex items-end">
                         <button onclick="addItemToInvoice()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm p-2 rounded-lg transition-all flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-plus"></i> Add Item
+                            <i class="fa-solid font-bold fa-plus"></i> Add to Invoice
                         </button>
                     </div>
                 </div>
 
-                <!-- Item Specs -->
+                <!-- Item Dynamic Specs Info Box -->
                 <div id="itemDetailCard" class="bg-blue-50/50 dark:bg-gray-700/50 border border-blue-100 dark:border-gray-600 rounded-lg p-4 mb-6 hidden">
-                    <p class="text-xs font-bold text-blue-900 dark:text-blue-300 uppercase tracking-wide mb-1">Item Specifications</p>
-                    <div id="itemDetailContent" class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-gray-700 dark:text-gray-300"></div>
+                    <p class="text-xs font-bold text-blue-900 dark:text-blue-300 uppercase tracking-wide mb-1">Product Details & Specs</p>
+                    <div id="itemDetailContent" class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-gray-700 dark:text-gray-300">
+                        <!-- Dynamic details show here -->
+                    </div>
                 </div>
 
-                <!-- Active Items Table -->
+                <!-- Invoice Table -->
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
@@ -130,19 +158,21 @@
                                 <th class="p-3 text-center">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="invoiceTableBody" class="text-sm divide-y dark:divide-gray-700"></tbody>
+                        <tbody id="invoiceTableBody" class="text-sm divide-y dark:divide-gray-700">
+                            <!-- Items rendered here -->
+                        </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Profile History Section -->
+            <!-- Profile History Section (Added as an Extension) -->
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
                     <div>
                         <h2 class="text-lg font-bold text-gray-900 dark:text-white">Profile Invoice History</h2>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">View and search all previous invoices created by this profile.</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Search and view previous invoices created in this profile.</p>
                     </div>
-                    <input type="text" id="searchHistory" onkeyup="renderHistory()" placeholder="Search Invoice ID or Name..." class="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-lg px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-64">
+                    <input type="text" id="searchHistory" onkeyup="renderHistory()" placeholder="Search Invoice ID or Name..." class="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-64">
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
@@ -156,19 +186,21 @@
                                 <th class="p-3 text-center">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="historyTableBody" class="text-sm divide-y dark:divide-gray-700"></tbody>
+                        <tbody id="historyTableBody" class="text-sm divide-y dark:divide-gray-700">
+                            <!-- History items rendered here -->
+                        </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- Right Side Total & Actions -->
+        <!-- Live Invoice Preview & Actions -->
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 flex flex-col justify-between h-fit sticky top-20">
             <div>
                 <div class="border-b border-gray-200 dark:border-gray-700 pb-4 mb-4 flex justify-between items-center">
                     <div>
-                        <h2 class="font-extrabold text-blue-900 dark:text-blue-400 text-lg">CURRENT BILL</h2>
-                        <p class="text-xs text-gray-400">Rakabill Billing Engine</p>
+                        <h2 class="font-extrabold text-blue-900 dark:text-blue-400 text-lg">INVOICE PREVIEW</h2>
+                        <p class="text-xs text-gray-400">Rakabill Automated System</p>
                     </div>
                     <i class="fa-solid fa-receipt text-2xl text-blue-600"></i>
                 </div>
@@ -182,6 +214,10 @@
                         <span>Total Discounts</span>
                         <span id="totalDiscount" class="text-green-600 dark:text-green-400">- Rs. 0.00</span>
                     </div>
+                    <div class="flex justify-between text-gray-600 dark:text-gray-400">
+                        <span>Tax / Service Charges</span>
+                        <span id="taxCharge">Rs. 0.00</span>
+                    </div>
                     <div class="border-t border-gray-200 dark:border-gray-700 pt-3 flex justify-between font-extrabold text-lg text-gray-900 dark:text-white">
                         <span>Grand Total</span>
                         <span id="grandTotal" class="text-blue-600 dark:text-blue-400">Rs. 0.00</span>
@@ -190,34 +226,34 @@
             </div>
 
             <div class="mt-8 space-y-3">
-                <button onclick="saveAndPrintInvoice()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition-all flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-print"></i> Save & Print Invoice / PDF
+                <button onclick="saveAndPrintInvoice()" class="w-full bg-blue-900 hover:bg-blue-950 text-white font-medium py-2.5 rounded-lg text-sm transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-print"></i> Save & Print Category Invoice
                 </button>
             </div>
         </div>
     </main>
 
-    <!-- Printable Invoice Template Container -->
-    <div id="printableInvoice" class="hidden p-8 max-w-2xl mx-auto bg-white text-black">
+    <!-- Hidden Printable Area (Fills on Print to prevent Empty PDF issue) -->
+    <div id="printableArea" class="hidden p-8 bg-white text-black">
         <div class="flex justify-between items-center border-b pb-4 mb-4">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-blue-900 rounded flex items-center justify-center text-white font-bold">R</div>
-                <span class="text-2xl font-bold text-blue-900">Rakabill</span>
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-12 bg-blue-900 rounded-lg flex items-center justify-center text-white font-bold text-xl">R</div>
+                <div class="text-2xl font-extrabold text-blue-900">Rakabill</div>
             </div>
             <div class="text-right">
-                <h2 class="text-xl font-bold text-gray-800" id="printCatTitle">INVOICE</h2>
-                <p class="text-xs text-gray-500" id="printInvId">ID: #0000</p>
-                <p class="text-xs text-gray-500" id="printDate">Date: --</p>
+                <h2 class="text-xl font-bold uppercase" id="printCategory">INVOICE</h2>
+                <p class="text-xs text-gray-600" id="printInvoiceId">Invoice: #</p>
+                <p class="text-xs text-gray-600" id="printDate">Date: </p>
             </div>
         </div>
-        <div class="mb-4 text-sm">
-            <p><strong>Customer Name:</strong> <span id="printCustName">--</span></p>
-            <p><strong>Contact:</strong> <span id="printCustPhone">--</span></p>
+        <div class="mb-6 text-sm">
+            <p><strong>Customer Name:</strong> <span id="printCustName">Guest</span></p>
+            <p><strong>Contact:</strong> <span id="printCustPhone">N/A</span></p>
         </div>
-        <table class="w-full text-left border-collapse text-xs mb-4">
+        <table class="w-full text-left border-collapse text-xs mb-6">
             <thead>
-                <tr class="border-b bg-gray-100">
-                    <th class="p-2">Item</th>
+                <tr class="bg-gray-100 border-b">
+                    <th class="p-2">Item / Service</th>
                     <th class="p-2">Price</th>
                     <th class="p-2">Qty</th>
                     <th class="p-2">Discount</th>
@@ -227,33 +263,41 @@
             <tbody id="printTableBody"></tbody>
         </table>
         <div class="text-right text-sm space-y-1">
-            <p>Subtotal: <span id="printSubtotal">Rs. 0</span></p>
-            <p>Discount: <span id="printDiscount">Rs. 0</span></p>
-            <p class="text-base font-bold">Grand Total: <span id="printGrandTotal">Rs. 0</span></p>
+            <p>Subtotal: <span id="printSubTotal">Rs. 0</span></p>
+            <p>Total Discount: <span id="printDiscount">Rs. 0</span></p>
+            <p class="text-lg font-bold border-t pt-2">Grand Total: <span id="printGrandTotal">Rs. 0</span></p>
         </div>
     </div>
 
-    <!-- Application Script -->
+    <!-- App Logic JavaScript -->
     <script>
         const categoryDatabase = {
             pharmacy: [
-                { id: 1, name: "Paracetamol (Panadol)", mg: "500mg", price: 30, discount: 5, info: "Dose: 1-2 tablets" },
-                { id: 2, name: "Amoxicillin (Augmentin)", mg: "625mg", price: 250, discount: 10, info: "Antibiotic" }
+                { id: 1, name: "Paracetamol (Panadol)", mg: "500mg", price: 30, discount: 5, info: "Dose: 1-2 tablets | Type: Tablet" },
+                { id: 2, name: "Amoxicillin (Augmentin)", mg: "625mg", price: 250, discount: 10, info: "Antibiotic | Type: Coated Tablet" },
+                { id: 3, name: "Omeprazole (Risek)", mg: "20mg", price: 180, discount: 12, info: "Antacid | Capsule" }
             ],
             ct_scan: [
-                { id: 101, name: "CT Brain (Plain)", mg: "N/A", price: 4500, discount: 500, info: "Region: Head" },
-                { id: 102, name: "CT Abdomen with Contrast", mg: "N/A", price: 9500, discount: 1000, info: "Region: Abdominal" }
+                { id: 101, name: "CT Brain (Plain)", mg: "N/A", price: 4500, discount: 500, info: "Scan Type: Non-Contrast | Region: Head" },
+                { id: 102, name: "CT Abdomen with Contrast", mg: "N/A", price: 9500, discount: 1000, info: "Requires Fasting | Region: Abdominal" },
+                { id: 103, name: "CT KUB (Kidney, Ureter, Bladder)", mg: "N/A", price: 6000, discount: 500, info: "Renal Tract Evaluation" }
             ],
             mri: [
-                { id: 201, name: "MRI Brain Contrast", mg: "N/A", price: 12000, discount: 1000, info: "3T High Res" }
+                { id: 201, name: "MRI Brain Contrast", mg: "N/A", price: 12000, discount: 1000, info: "3T High Resolution" },
+                { id: 202, name: "MRI Lumbar Spine", mg: "N/A", price: 11000, discount: 800, info: "Spine & Disc Structure" }
             ],
             restaurant: [
-                { id: 301, name: "Chicken Karahi", mg: "1 KG", price: 1800, discount: 0, info: "Serves: 4" }
+                { id: 301, name: "Chicken Karahi (Full)", mg: "1 KG", price: 1800, discount: 0, info: "Spice Level: Medium | Serves: 4" },
+                { id: 302, name: "Chicken Biryani", mg: "Single", price: 350, discount: 20, info: "Basmati Rice | Includes Raita" }
+            ],
+            groceries: [
+                { id: 401, name: "Refined Cooking Oil 5L", mg: "5 Liters", price: 2600, discount: 50, info: "Brand: Premium Pure" },
+                { id: 402, name: "Basmati Rice Super", mg: "5 KG", price: 1750, discount: 100, info: "A-Grade Long Grain" }
             ]
         };
 
         let currentInvoice = [];
-        let history = JSON.parse(localStorage.getItem('rakabill_history')) || [];
+        let invoiceHistory = JSON.parse(localStorage.getItem('rakabill_history')) || [];
 
         function toggleDarkMode() {
             document.documentElement.classList.toggle('dark');
@@ -263,14 +307,16 @@
         }
 
         function switchCategory(cat) {
-            document.getElementById('dashboardTitle').innerText = cat.replace('_', ' ').toUpperCase() + " Billing Dashboard";
+            document.getElementById('dashboardTitle').innerText = cat.replace('_', ' ').toUpperCase() + " Dashboard";
+            document.getElementById('userRole').innerText = "Active Role: " + cat.replace('_', ' ').toUpperCase();
             document.getElementById('categoryBadge').innerText = cat.replace('_', ' ').toUpperCase();
             
             const dropdown = document.getElementById('itemDropdown');
             dropdown.innerHTML = '<option value="">-- Select Item/Service --</option>';
             
-            (categoryDatabase[cat] || []).forEach(item => {
-                dropdown.innerHTML += `<option value="${item.id}">${item.name} - Rs.${item.price}</option>`;
+            const items = categoryDatabase[cat] || [];
+            items.forEach(item => {
+                dropdown.innerHTML += `<option value="${item.id}">${item.name} (${item.mg !== 'N/A' ? item.mg : ''}) - Rs.${item.price}</option>`;
             });
 
             currentInvoice = [];
@@ -284,15 +330,18 @@
             const detailCard = document.getElementById('itemDetailCard');
             const detailContent = document.getElementById('itemDetailContent');
 
-            if (!itemId) return detailCard.classList.add('hidden');
+            if (!itemId) {
+                detailCard.classList.add('hidden');
+                return;
+            }
 
             const item = (categoryDatabase[cat] || []).find(i => i.id == itemId);
             if (item) {
                 detailContent.innerHTML = `
                     <div><strong>Name:</strong> ${item.name}</div>
-                    <div><strong>Spec:</strong> ${item.mg}</div>
+                    <div><strong>Mg/Spec:</strong> ${item.mg}</div>
                     <div><strong>Price:</strong> Rs. ${item.price}</div>
-                    <div><strong>Info:</strong> ${item.info}</div>
+                    <div><strong>Details:</strong> ${item.info}</div>
                 `;
                 detailCard.classList.remove('hidden');
             }
@@ -303,7 +352,7 @@
             const itemId = document.getElementById('itemDropdown').value;
             const qty = parseInt(document.getElementById('itemQty').value) || 1;
 
-            if (!itemId) return alert("Please select an item.");
+            if (!itemId) return alert("Please select an item first.");
 
             const item = (categoryDatabase[cat] || []).find(i => i.id == itemId);
             const existing = currentInvoice.find(i => i.id == itemId);
@@ -334,25 +383,31 @@
 
                 tbody.innerHTML += `
                     <tr>
-                        <td class="p-3"><p class="font-bold">${item.name}</p><p class="text-xs text-gray-500">${item.info}</p></td>
+                        <td class="p-3">
+                            <p class="font-bold text-gray-900 dark:text-white">${item.name}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">${item.mg !== 'N/A' ? 'Spec: ' + item.mg + ' | ' : ''}${item.info}</p>
+                        </td>
                         <td class="p-3">Rs. ${item.price}</td>
                         <td class="p-3">${item.qty}</td>
-                        <td class="p-3 text-green-600">Rs. ${item.discount * item.qty}</td>
+                        <td class="p-3 text-green-600 dark:text-green-400">Rs. ${item.discount * item.qty}</td>
                         <td class="p-3 font-semibold">Rs. ${itemTotal}</td>
-                        <td class="p-3 text-center"><button onclick="removeItem(${item.id})" class="text-red-500"><i class="fa-solid fa-trash"></i></button></td>
+                        <td class="p-3 text-center">
+                            <button onclick="removeItem(${item.id})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>
+                        </td>
                     </tr>
                 `;
             });
 
+            const grandTotal = subtotal - totalDiscount;
             document.getElementById('subTotal').innerText = `Rs. ${subtotal.toFixed(2)}`;
             document.getElementById('totalDiscount').innerText = `- Rs. ${totalDiscount.toFixed(2)}`;
-            document.getElementById('grandTotal').innerText = `Rs. ${(subtotal - totalDiscount).toFixed(2)}`;
+            document.getElementById('grandTotal').innerText = `Rs. ${grandTotal.toFixed(2)}`;
         }
 
         function saveAndPrintInvoice() {
             if (currentInvoice.length === 0) return alert("Invoice is empty!");
 
-            const invId = "INV-" + Math.floor(100000 + Math.random() * 900000);
+            const invId = "RKB-" + Math.floor(100000 + Math.random() * 900000);
             const custName = document.getElementById('custName').value || "Guest";
             const custPhone = document.getElementById('custPhone').value || "N/A";
             const cat = document.getElementById('categorySelector').value;
@@ -363,7 +418,7 @@
                 totalDiscount += i.discount * i.qty;
             });
 
-            const invData = {
+            const record = {
                 id: invId,
                 custName,
                 custPhone,
@@ -372,16 +427,16 @@
                 subtotal,
                 totalDiscount,
                 grandTotal: subtotal - totalDiscount,
-                date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString()
+                date: new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString()
             };
 
-            history.unshift(invData);
-            localStorage.setItem('rakabill_history', JSON.stringify(history));
+            invoiceHistory.unshift(record);
+            localStorage.setItem('rakabill_history', JSON.stringify(invoiceHistory));
 
-            // Populate printable area
-            document.getElementById('printCatTitle').innerText = cat.replace('_', ' ').toUpperCase() + " INVOICE";
-            document.getElementById('printInvId').innerText = "ID: " + invId;
-            document.getElementById('printDate').innerText = "Date: " + invData.date;
+            // Populate Print Template
+            document.getElementById('printCategory').innerText = cat.replace('_', ' ').toUpperCase() + " INVOICE";
+            document.getElementById('printInvoiceId').innerText = "Invoice: " + invId;
+            document.getElementById('printDate').innerText = "Date: " + record.date;
             document.getElementById('printCustName').innerText = custName;
             document.getElementById('printCustPhone').innerText = custPhone;
 
@@ -399,51 +454,48 @@
                 `;
             });
 
-            document.getElementById('printSubtotal').innerText = "Rs. " + subtotal;
+            document.getElementById('printSubTotal').innerText = "Rs. " + subtotal;
             document.getElementById('printDiscount').innerText = "Rs. " + totalDiscount;
             document.getElementById('printGrandTotal').innerText = "Rs. " + (subtotal - totalDiscount);
 
-            const printArea = document.getElementById('printableInvoice');
-            printArea.classList.remove('hidden');
             window.print();
-            printArea.classList.add('hidden');
-
             renderHistory();
         }
 
         function renderHistory() {
             const tbody = document.getElementById('historyTableBody');
-            const query = document.getElementById('searchHistory').value.toLowerCase();
+            const search = document.getElementById('searchHistory').value.toLowerCase();
             tbody.innerHTML = '';
 
-            const filtered = history.filter(h => h.id.toLowerCase().includes(query) || h.custName.toLowerCase().includes(query));
+            const filtered = invoiceHistory.filter(h => h.id.toLowerCase().includes(search) || h.custName.toLowerCase().includes(search));
 
             filtered.forEach(h => {
                 tbody.innerHTML += `
                     <tr>
-                        <td class="p-3 font-semibold text-blue-600">${h.id}</td>
+                        <td class="p-3 font-semibold text-blue-600 dark:text-blue-400">${h.id}</td>
                         <td class="p-3">${h.custName}</td>
                         <td class="p-3 uppercase text-xs">${h.category.replace('_', ' ')}</td>
                         <td class="p-3 font-bold">Rs. ${h.grandTotal}</td>
-                        <td class="p-3 text-xs text-gray-500">${h.date}</td>
+                        <td class="p-3 text-xs text-gray-500 dark:text-gray-400">${h.date}</td>
                         <td class="p-3 text-center">
-                            <button onclick="reprintHistory('${h.id}')" class="text-blue-600 hover:text-blue-800"><i class="fa-solid fa-print"></i> Print</button>
+                            <button onclick="reprintInvoice('${h.id}')" class="text-blue-600 hover:text-blue-800 dark:text-blue-400"><i class="fa-solid fa-print"></i> Print</button>
                         </td>
                     </tr>
                 `;
             });
         }
 
-        function reprintHistory(id) {
-            const inv = history.find(h => h.id === id);
-            if (!inv) return;
+        function reprintInvoice(id) {
+            const rec = invoiceHistory.find(h => h.id === id);
+            if (!rec) return;
 
-            currentInvoice = inv.items;
-            document.getElementById('custName').value = inv.custName;
-            document.getElementById('custPhone').value = inv.custPhone;
+            currentInvoice = rec.items;
+            document.getElementById('custName').value = rec.custName;
+            document.getElementById('custPhone').value = rec.custPhone;
             saveAndPrintInvoice();
         }
 
+        // Initialize on Load
         switchCategory('pharmacy');
     </script>
 </body>
